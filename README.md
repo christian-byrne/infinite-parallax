@@ -1,11 +1,11 @@
 
 # Infinite Parallax
 
-In Unity, infinite parallax is a technique used to create the illusion of depth in 2D games. This is done by moving the background layers at different speeds, creating a parallax effect.
+In Unity, *infinite parallax* is a technique used to create the illusion of depth in 2D games. This is done by moving the background layers at different speeds, creating a parallax effect.
 
 In the realm of AI image generation, *infintie zoom* is a technique used to create the illusion of an infinite zoom, by taking an image, decreasing its size, inpainting the padding around it to match the original size, repeating the process, and then stitching the images together.
 
-Infinite Parallax combines these ideas. In other words, it leverages AI tools that allow for automated depth maps and automated segmentation with certain Stable Diffusion models and techniques' abilities to seemlessly inpaint images in a context-aware manner to create intermediate frames whose magnitude of change varies with the y-axis of the image -- with each y-axis "slice" or "layer"'s velocity varying with the calculated depth.
+Infinite Parallax combines these ideas to create an AI-generated video by iteratively inpainting and stitching together layers of an input image, each layer moving at a different speed, to create the illusion of depth and motion.
 
 ## Demo
 
@@ -51,7 +51,6 @@ HEIGHT = START_IMAGE.height
 
 #### Direction Angle (0-360 degrees)
 
-In degrees, the direction of the parallax effect. 0 degrees is to the right, 90 degrees is up, 180 degrees is left, and 270 degrees is down.
 
 ```python
 print(
@@ -72,7 +71,7 @@ def get_velocity_vector(direction_theta, velocity):
 ```python
 layers = []
 if not using_segmentation:
-    num_layers = input("Number of Layers: ")
+    num_layers = int(input("Number of Layers: "))
 
     for i in range(num_layers):
         layers.append({})
@@ -94,7 +93,7 @@ if not using_segmentation:
                 "to ensure the entire image is covered."
                 )
 
-            total_height_last_layer = sum([layer["height"] for layer in layers[:-1]])
+            total_height_before_last_layer = sum([layer["height"] for layer in layers[:-1]])
             height_last_layer = image_height - total_height_last_layer
             print(f"Height of last layer: {height_last_layer}px")
 ```
@@ -381,6 +380,15 @@ Possible sounds:
 - Ambiance
 - Voices
 
-#### Frame Blending and Keyframe Group Size
+
+### Color Correction
 
 ...
+
+### Export Output
+
+Important export configuration options
+- Codec
+- Frame blending type
+- Keyframe group size
+- Bitrate
