@@ -249,7 +249,8 @@ Each step optional, with user experimentation suggested to determine the best re
 
 ### 3 - Inpainting
 
-Inpaint the composited layers such that the process uses the entire context
+- Inpaint the composited layers such that the process uses the entire context.
+- (Optional) Iterative Interrogation/Tagging at each step -> prepend to positive prompt
 
 ![alt text](docs/pictures/docs-dresden-inpaint.png)
 
@@ -273,6 +274,8 @@ for i in range(num_layers):
         inpainted_recropped_layers[i]
     )
 ```
+
+![alt text](docs/pictures/docs-dresden-re_separate_layers.png)
 
 ### Repeat *Step Process* `MAX_STEPS` Times
 
