@@ -1,11 +1,11 @@
 
 # Infinite Parallax
 
-In Unity, *infinite parallax* is a technique used to create the illusion of depth in 2D games. This is done by moving the background layers at different speeds, creating a parallax effect.
+In Unity, *infinite parallax* ([see example](https://www.youtube.com/watch?v=MEy-kIGE-lI)) is a technique used to create the illusion of depth in 2D games. This is done by moving the background layers at different speeds which vary inversely with distance-from-viewer, creating a [parallax](https://en.wikipedia.org/wiki/Parallax) effect.
 
-In the realm of AI image generation, *infintie zoom* is a technique used to create the illusion of an infinite zoom, by taking an image, decreasing its size, inpainting the padding around it to match the original size, repeating the process, and then stitching the images together.
+In the realm of AI image generation, *infinite zoom* ([see example](https://www.youtube.com/watch?v=yDCUTyZD--E)) is a technique used to create the illusion of an infinite zoom, by taking an image, shrinking it, inpainting the padding around it to match the original size, repeating the process, and then stitching the images together into a video using linear [zoom transitions](https://www.youtube.com/watch?v=G01V09CWTJY&t=1s) and, finally, reversing it.
 
-Infinite Parallax combines these ideas to create an AI-generated video by iteratively inpainting and stitching together layers of an input image, each layer moving at a different speed, to create the illusion of depth and motion.
+Infinite Parallax combines these ideas. So, instead of iteratively shrinking an image and inpainting the padding border, the image is sliced into layers and each layer is shifted in accordance with a given vector of motion, where the the relative motion of each layer is inversely proportional with its distance-to-viewer. The layers are re-composited after being shifted and the gap of empty space for each layer is inpainted side-by-side such that the inpainting process uses the context according to each layer's position at that given time. Finally, the layer frames are stitched using linear [sliding transitions](https://www.youtube.com/shorts/S6Ywp-598HI) instead of zoom transitions. See demo below. 
 
 ## Demo
 
@@ -20,7 +20,9 @@ Infinite Parallax combines these ideas to create an AI-generated video by iterat
 
 ![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](demo/demo-dresden-parallax.gif)
 
-Low quality, bad color conversion, and short length are just products of requiring a gif for github markdown compiler. In the full video, the parallax effect goes until the entire original image is gone
+Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smoothness: 17.5, FPS: 30
+
+*Low quality, bad color conversion, and short length are just products of requiring a gif for github markdown compiler. In the full video, the parallax effect goes until the entire original image is gone*
 
 ## Process
 
@@ -219,6 +221,12 @@ MAX_STEPS = max([layer["steps"] for layer in layers])
    1. E.g., if the direction is left (180 degrees), the layers are cropped `velocity` pixels from their left side, and then composited onto the original canvas flush with the left side of the canvas
 4. Add alpha layer or mask to the canvas's empty space
 
+
+![alt text](docs/pictures/docs-dresden-cropping_and_masking.png)
+
+![alt text](docs/pictures/docs-dresden-cropping_and_masking-output.png)
+
+
 ### 2 - Inpaint Mask Preprocessing (Optional)
 
 Each step optional, with user experimentation suggested to determine the best results. Generally, this order should be followed:
@@ -234,10 +242,20 @@ Each step optional, with user experimentation suggested to determine the best re
    4. Falloff ratio / decay factor
 4. Mask feathering
 
+![alt text](docs/pictures/docs-dresden-inpaint_preprocessing-blurred_mask.png)
+
+![alt text](docs/pictures/docs-dresden-inpaint_preprocessing-blurred_mask-output.png)
+
+
 ### 3 - Inpainting
 
 Inpaint the composited layers such that the process uses the entire context
 
+![alt text](docs/pictures/docs-dresden-inpaint.png)
+
+![alt text](docs/pictures/docs-dresden-inpaint-output.png)
+
+*This output is the start image for the next step*
 
 ### 4 - Re-Separate Layers
 
