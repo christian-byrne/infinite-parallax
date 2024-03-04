@@ -1,4 +1,10 @@
 import subprocess
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+from PIL import ImageSequence
+import os
+
 
 def create_sliding_transition(input_image1, input_image2, output_video, slide_speed):
     # Calculate the duration of the sliding transition based on slide_speed
@@ -21,3 +27,4 @@ def create_sliding_transition(input_image1, input_image2, output_video, slide_sp
 
 # Example usage:
 # create_sliding_transition('image1.jpg', 'image2.jpg', 'sliding_transition.mp4', 100)
+

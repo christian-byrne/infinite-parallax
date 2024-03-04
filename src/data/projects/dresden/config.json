@@ -1,0 +1,61 @@
+{
+    "created_at": "Mon Mar  4 15:57:35 2024",
+    "original_input_image_path": "/home/c_byrne/projects/infinite-parallax/demo/1600px-Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight_-_Google_Art_Project.jpg",
+    "project_dir_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/dresden",
+    "project_config_path" : "/home/c_byrne/projects/infinite-parallax/src/data/projects/dresden/config.json",
+    "project_name" : "dresden",
+    "direction": 180.0,
+    "direction_theta": 3.141592653589793,
+    "velocity_vector": [
+        -1,
+        0
+    ],
+    "smoothness": 90,
+    "fps": 30,
+    "max_steps": 647,
+    "layers": [
+        {
+            "height": 130.0,
+            "distance": 280.0,
+            "distance_ratio": 0.15384615384615385,
+            "velocity": [
+                -13.846153846153847,
+                0.0
+            ],
+            "steps_x": 115,
+            "steps_y": 0
+        },
+        {
+            "height": 274.0,
+            "distance": 50.0,
+            "distance_ratio": 0.027472527472527472,
+            "velocity": [
+                -2.4725274725274726,
+                0.0
+            ],
+            "steps_x": 647,
+            "steps_y": 0
+        },
+        {
+            "height": 294.0,
+            "distance": 690.0,
+            "distance_ratio": 0.3791208791208791,
+            "velocity": [
+                -34.12087912087912,
+                0.0
+            ],
+            "steps_x": 46,
+            "steps_y": 0
+        },
+        {
+            "distance": 800.0,
+            "distance_ratio": 0.43956043956043955,
+            "velocity": [
+                -39.56043956043956,
+                0.0
+            ],
+            "steps_x": 40,
+            "steps_y": 0
+        }
+    ]
+}
