@@ -20,7 +20,7 @@ Infinite Parallax combines these ideas. So, instead of iteratively shrinking an 
 
 ![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](demo/demo-dresden-parallax.gif)
 
-Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smoothness: 17.5, FPS: 30
+Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smoothness: 117.5, FPS: 10
 
 *Low quality, bad color conversion, and short length are just products of requiring a gif for github markdown compiler. In the full video, the parallax effect goes until the entire original image is gone*
 

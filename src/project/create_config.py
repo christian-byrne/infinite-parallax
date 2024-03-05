@@ -64,8 +64,9 @@ def create_config():
                 )
                 height_last_layer = input_image.height - total_height_before_last_layer
                 print(f"Height of last layer: {height_last_layer}px")
+                layers[i]["height"] = int(height_last_layer)
             else:
-                layers[i]["height"] = float(input(f"Height of Layer {i} (in pixels): "))
+                layers[i]["height"] = int(input(f"Height of Layer {i} (in pixels): "))
 
     DEFAULT_DISTANCES = {
         "cloud_layer": {
@@ -112,12 +113,12 @@ def create_config():
 
     print(
         "Smoothness",
-        "The base change in distance in between each inpainting step",
-        "More smoothness means more intermediate frames, and a smoother transition",
+        "More smoothness means intermediate frames, and a smoother transition",
         "at the cost of more time and memory",
+        "\nRecommended: 16"
     )
 
-    config["smoothness"] = int(input("(int) Smoothness (recommended 20-100): "))
+    config["smoothness"] = int(1000 / int(input("(int) Smoothness (0-100): ")))
 
     print(
         "Frames Per Second",
@@ -135,6 +136,11 @@ def create_config():
             config["velocity_vector"][1]
             * layers[i]["distance_ratio"]
             * config["smoothness"],
+        )
+        # Round to 1 decimal place
+        layers[i]["velocity"] = (
+            round(layers[i]["velocity"][0], 1),
+            round(layers[i]["velocity"][1], 1),
         )
 
     # Each layer requires enough steps so that it can move the full distance of the image

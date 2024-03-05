@@ -22,7 +22,7 @@ class ParallaxProject:
 
         for index, layer in enumerate(self.get_config()["layers"]):
             name_prefix = f"layer_{index+1}"
-            self.layers.append(Layer(self.get_config(), name_prefix))
+            self.layers.append(Layer(self.get_config(), layer, name_prefix))
 
     def project_dir_exists(self):
         return os.path.exists(self.project_dir_path)
