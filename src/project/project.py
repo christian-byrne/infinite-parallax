@@ -7,6 +7,7 @@ from constants import (
     ORIGINAL_LAYERS_DIR,
     VIDEO_CODEC,
     OUTPUT_VIDEO_PATH,
+    OUTPUTS_USER_REL_PATH,
 )
 from .create_config import create_config
 from layers.layer import Layer
@@ -85,8 +86,9 @@ class ParallaxProject:
         """
         Create a final video from the frames.
 
-        self.frames is a list of lists of VideoClip instances. Each list of VideoClip instances represents a layer.
-        The layers should be stacked vertically.
+        self.layer_clips is a list of lists of VideoClip instances.
+        Each list of VideoClip instances represents a layer.
+        The layers should be stacked according to the vector of motion.
 
         This function creates a final video by compositing the layer clips and saving it to the specified output path.
         """
@@ -105,6 +107,21 @@ class ParallaxProject:
             codec=VIDEO_CODEC,
             fps=self.get_config()["fps"],
         )
+
+        # Make copy in user outputs directory
+        user_outputs_dir = os.path.join(self.repo_root, OUTPUTS_USER_REL_PATH)
+        if not os.path.exists(user_outputs_dir):
+            os.makedirs(user_outputs_dir)
+        user_output_path = os.path.join(
+            user_outputs_dir, f"{self.name}-final_parallax_video.mp4"
+        )
+
+        try:
+            os.system(f"cp {output_path} {user_output_path}")
+        except Exception as e:
+            print(
+                f"Couldn't copy final video to user outputs: {e}. Use the project folder"
+            )
 
         print(f"\n\nFinal video saved to {output_path}\n")
 

@@ -108,7 +108,7 @@ def create_config():
             layers[i]["distance"] = re.sub("[^0-9]", "", layers[i]["distance"])
             layers[i]["distance"] = float(layers[i]["distance"])
 
-    # Convert distances to percentages
+    # Convert distances to ratios
     total_distance = sum([layer["distance"] for layer in layers])
     for i in range(num_layers):
         layers[i]["distance_ratio"] = layers[i]["distance"] / total_distance
@@ -132,6 +132,7 @@ def create_config():
             "\nRecommended: 5, assuming a smoothness of 16",
         ]
     )
+    config["seconds_per_step"] = int(input("(int) Seconds Per Step: "))
 
     print_list(
         [
@@ -146,7 +147,6 @@ def create_config():
     )
     config["fps"] = int(input("(int) Frame Per Second of the Output Video: "))
 
-    config["seconds_per_step"] = int(input("(int) Seconds Per Step: "))
 
     for i in range(num_layers):
         layers[i]["velocity"] = (

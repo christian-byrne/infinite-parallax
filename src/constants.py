@@ -10,6 +10,7 @@ LAYER_VIDEOS_DIR = "videos/layer_videos"
 DEV = True
 VIDEO_CODEC = "libx264"
 OUTPUT_VIDEO_PATH = "output"
+OUTPUTS_USER_REL_PATH = "outputs"
 DEFAULT_DISTANCES = {
     "cloud_layer": {
         "mathematically_accurate_distance": 16.18,
