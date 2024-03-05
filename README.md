@@ -413,3 +413,17 @@ Important export configuration options
 - Frame blending type
 - Keyframe group size
 - Bitrate
+
+
+## TODO
+
+- [ ] Full Vector testing
+- [ ] Delete first image from each layer sequence or don't save in first place
+- [ ] Auomate video post-processing
+  - [ ] Add sound from library
+  - [ ] Color correction
+- [ ] Sizing standardization solution from tensorflow to PIL
+  - [ ] Crop `ERROR_MARGIN` pixels from top of first layer and bottom of last layer 
+- [ ] Create simple example project
+- [ ] Update README
+- [ ] Turn into ComfyUI node
