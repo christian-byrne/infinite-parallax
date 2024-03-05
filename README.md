@@ -7,8 +7,6 @@ In the realm of AI image generation, *infinite zoom* ([see example](https://www.
 
 This project combines these ideas. Instead of iteratively shrinking an image and inpainting the padding border, the image is sliced into layers and each layer is shifted in accordance with a given vector of motion. The layers are re-composited after being shifted and the gaps of empty space created by the shifting are inpainted side-by-side. This way, the inpainting process uses the context according to each layer's position at that given time. With a high number of inpainting steps per second, the layers can move at different speeds without totally disrupting the logical flow of the picture. Finally, the layer frames are stitched using linear [sliding transitions](https://www.youtube.com/shorts/S6Ywp-598HI) instead of zoom transitions. See demo below. 
 
-It will eventually be turned into a comfyUI node.
-
 ## Demo
 
 **Input Image**
@@ -18,7 +16,6 @@ It will eventually be turned into a comfyUI node.
 *View of Dresden by Moonlight* by Johan Christian Dahl
 
 **Output Video**
-
 
 ![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](docs/demo/demo-dresden-parallax.gif)
 
