@@ -8,6 +8,7 @@ from constants import (
     VIDEO_CODEC,
     OUTPUT_VIDEO_PATH,
     OUTPUTS_USER_REL_PATH,
+    LAYER_OUTPUT_DIR,
 )
 from .create_config import create_config
 from layers.layer import Layer
@@ -57,15 +58,29 @@ class ParallaxProject:
         if not self.project_config_exists():
             self.set_config()
 
+        # Create folders for standard project structure
+        self.make_layer_outputs_dir()
+        self.make_workflow_dir()  # TODO - copy copy of template workflow named to match project name
+
         self.copy_input_image_to_project_dir()
         self.input_image = Image.open(self.get_config()["input_image_path"])
+
+        if (
+            input(
+                f"Have you finished inpainting the layers and putting the outputs in {self.project_dir_path}/{LAYER_OUTPUT_DIR}? (y/n): "
+            ).lower()
+            != "y"
+        ):
+            print(colored("Please do so and then run the script again.", "red"))
+            exit()
+        
+        self.create_original_layer_slices()
 
         self.layers = []
         for index, layer in enumerate(self.get_config()["layers"]):
             name_prefix = f"layer_{index+1}"
             self.layers.append(Layer(self.get_config(), layer, name_prefix))
 
-        self.create_original_layer_slices()
 
         for layer in self.layers:
             layer.create_cropped_steps()
@@ -81,6 +96,20 @@ class ParallaxProject:
             y += layer_config["height"]
 
         self.video_from_layer_frames()
+
+    def update_config(self, key, value):
+        config = self.get_config()
+        config[key] = value
+        with open(self.config_path, "w") as config_file:
+            json.dump(config, config_file, indent=4)
+
+    def make_workflow_dir(self):
+        if not os.path.exists(os.path.join(self.project_dir_path, "workflow")):
+            os.makedirs(os.path.join(self.project_dir_path, "workflow"))
+
+    def make_layer_outputs_dir(self):
+        if not os.path.exists(os.path.join(self.project_dir_path, LAYER_OUTPUT_DIR)):
+            os.makedirs(os.path.join(self.project_dir_path, LAYER_OUTPUT_DIR))
 
     def video_from_layer_frames(self):
         """
@@ -181,7 +210,7 @@ class ParallaxProject:
             self.project_dir_path, input_image_filename
         )
         os.system(f"cp {input_image_path} {input_image_dest_path}")
-        config["input_image_path"] = input_image_dest_path
+        self.update_config("input_image_path", input_image_dest_path)
 
     def print_info(self):
         print(f"\n\n{self.name} v{self.version} by {self.author}\n")

@@ -1,0 +1,66 @@
+{
+    "created_at": "Tue Mar  5 00:04:47 2024",
+    "original_input_image_path": "/home/c_byrne/Cole_Thomas_The_Course_of_Empire_Destruction_1836.jpg",
+    "input_image_width": 2515,
+    "input_image_height": 1548,
+    "direction": 180.0,
+    "direction_theta": 3.141592653589793,
+    "velocity_vector": [
+        -1,
+        0
+    ],
+    "smoothness": 62,
+    "seconds_per_step": 20,
+    "fps": 30,
+    "max_steps": 838,
+    "layers": [
+        {
+            "height": 373,
+            "distance": 88.0,
+            "distance_ratio": 0.35918367346938773,
+            "velocity": [
+                -15,
+                0.0
+            ],
+            "steps_x": 112,
+            "steps_y": 0
+        },
+        {
+            "height": 85,
+            "distance": 100.0,
+            "distance_ratio": 0.40816326530612246,
+            "velocity": [
+                -10,
+                0.0
+            ],
+            "steps_x": 99,
+            "steps_y": 0
+        },
+        {
+            "height": 360,
+            "distance": 45.0,
+            "distance_ratio": 0.1836734693877551,
+            "velocity": [
+                -34,
+                0.0
+            ],
+            "steps_x": 220,
+            "steps_y": 0
+        },
+        {
+            "height": 730,
+            "distance": 12.0,
+            "distance_ratio": 0.04897959183673469,
+            "velocity": [
+                -58,
+                0.0
+            ],
+            "steps_x": 838,
+            "steps_y": 0
+        }
+    ],
+    "project_dir_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire",
+    "config_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/config.json",
+    "project_name": "course-of-empire",
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/Cole_Thomas_The_Course_of_Empire_Destruction_1836.jpg"
+}

@@ -32,7 +32,12 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 
 ## TODO
 
+- [ ] Segmentation for non-rectangular initial layers to solve disjointedness in the shifted initial layers after they've been shifted many steps but are still in the frame (havent fully panned out of the frame yet) 
+  - [ ] Segment salient objects -> create masks -> mask from original picture -> overlay onto final video with motion equal to the average of the motion on the layers the object overlaps onto (the purpose being that the salient object is getting disjointed as the the multiple layers its in are moving at different speeds)
+  - [ ] Edit methods to handle non-rectangular layers (CompositeVideoClip)
+- [ ] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
+  - [ ] negative velocity testing
 - [ ] Delete first image from each layer sequence or don't save in first place
 - [ ] Auomate video post-processing
   - [ ] Add sound from library

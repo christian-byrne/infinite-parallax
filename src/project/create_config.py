@@ -116,9 +116,9 @@ def create_config():
     print_list(
         [
             "Smoothness",
-            "More smoothness means intermediate frames, and a smoother transition",
+            "More smoothness means more intermediate frames, and a smoother transition",
             "at the cost of more time and memory",
-            "\nRecommended: 16",
+            "\nRecommended: 15-20",
         ]
     )
 
@@ -129,7 +129,7 @@ def create_config():
             "Seconds Per Step",
             "The base speed of the final video",
             "The more seconds per step, the slower the parallax motion, which usually creates better looking results but the motion may become unnoticeable",
-            "\nRecommended: 5, assuming a smoothness of 16",
+            "\nRecommended: 8-20, assuming a smoothness of 16",
         ]
     )
     config["seconds_per_step"] = int(input("(int) Seconds Per Step: "))
@@ -145,16 +145,16 @@ def create_config():
             "Recommended: 30",
         ]
     )
-    config["fps"] = int(input("(int) Frame Per Second of the Output Video: "))
+    config["fps"] = int(input("(int) FPS of the Output Video: "))
 
 
     for i in range(num_layers):
         layers[i]["velocity"] = (
             config["velocity_vector"][0]
-            * layers[i]["distance_ratio"]
+            * (1/layers[i]["distance_ratio"])
             * config["smoothness"],
             config["velocity_vector"][1]
-            * layers[i]["distance_ratio"]
+            * (1/layers[i]["distance_ratio"])
             * config["smoothness"],
         )
         # Round to 1 decimal place

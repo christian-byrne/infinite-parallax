@@ -107,13 +107,13 @@ class Layer:
 
     def stitch_cropped_steps(self):
         """Stitch the cropped step images together to create the final layer output.
-        
+
         The order of the images should be from the first step to the last step.
         The output image should be saved in the project directory with the name {layer_prefix}_stitched_inpainted_regions.png.
-        
+
         Args:
             None
-        
+
         Returns:
             None
         """
@@ -228,17 +228,17 @@ class Layer:
 
         def make_frame(t):
             if DEV and t % 5 == 0 and t != 0:
-                print(colored(f"t: {t}seconds", "light_green"))
                 print(
-                    colored(f"progress (t / duration): {t / duration}", "light_green")
+                    colored(f"Layer_{self.name_prefix} at {t}seconds", "light_green"),
+                    colored(f"progress (t / duration): {t / duration}", "green"),
                 )
                 print(
                     colored(
-                        f"current x-coordinate (self.slide_distance * (t / duration): {int(self.slide_distance * (t / duration))}",
+                        f"Layer_{self.name_prefix} current x-coordinate (self.slide_distance * (t / duration): {int(self.slide_distance * (t / duration))}",
                         "light_blue",
                     )
                 )
-                
+
             x = int(self.slide_distance * (t / duration))
             return image_clip.get_frame(t)[:, x : x + output_vid_width]
 
