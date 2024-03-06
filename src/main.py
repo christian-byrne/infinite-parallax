@@ -3,7 +3,8 @@ from test.delete_test_project import delete_test_projects
 
 
 def main():
-    project_name = input("Enter the name of the project:\n> ")
+    project_name = input("\nEnter the name of the project:\n> ")
+    print("\n")
     project = ParallaxProject(project_name)
     project.print_info()
 

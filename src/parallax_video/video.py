@@ -5,7 +5,7 @@ from layers.layer import Layer
 import os
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
-from src.constants import (
+from constants import (
     DEV,
     VIDEO_CODEC,
 )
@@ -26,12 +26,19 @@ class ParallaxVideo:
         self.composite_layer_videoclips()
 
     def user_confirm(self):
-        prompt = f"Have you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n): "
-        decline_message = "Please do so and then run the script again."
+        prompt = (
+            colored("\n[CONFIRM PROCEED]", "red")
+            + f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):\n> "
+        )
+        decline_message = colored(
+            "Please do so and then run the script again.\n\n", "red"
+        )
 
-        if input(colored(prompt, "magenta")).lower() != "y":
-            print(colored(decline_message, "red"))
+        if input(prompt).lower() != "y":
+            print(decline_message)
             return False
+
+        return True
 
     def get_video_size(self):
         input_image = Image.open(self.project.config_file()["input_image_path"])
@@ -39,9 +46,9 @@ class ParallaxVideo:
 
     def create_layers(self) -> list[LayerInterface]:
         layers = []
-        for index, layer in enumerate(self.project.config_file()["layers"]):
+        for index, layer_config in enumerate(self.project.config_file()["layers"]):
             name_prefix = f"layer_{index+1}"
-            layers.append(Layer(self.project.config_file(), layer, name_prefix))
+            layers.append(Layer(self.project, layer_config, name_prefix, index + 1))
 
         return layers
 
@@ -76,7 +83,8 @@ class ParallaxVideo:
         )
 
         output_path = os.path.join(
-            self.project.output_video_dir(), f"{self.name}-final_parallax_video.mp4"
+            self.project.output_video_dir(),
+            f"{self.project.name}-final_parallax_video.mp4",
         )
 
         video_composite.write_videofile(

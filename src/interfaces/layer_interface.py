@@ -54,6 +54,7 @@ class LayerInterface(Protocol):
     cropped_step_images: list[
         ImageDict
     ]  # A list of cropped step images for the layer. Represented by dictionaries containing the PIL image object, filename, and other path parts for the image.
+    original_layer: ImageDict  # The original layer image. Represented by a dictionary containing the PIL image object, filename, and other path parts for the image.
 
     def get_x_velocity(self) -> int:
         """
