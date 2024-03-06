@@ -1,8 +1,9 @@
-## Process Explanation
+# Process Explanation
 
-Using moviepy, PIL, OpenCV, and imported comfyUI nodes. The completed version will be a comfyUI node.
+## Input Image
 
-### Input Image
+<details>
+<summary>Details</summary>
 
 ```python
 # create_config()
@@ -15,19 +16,73 @@ config["input_image_width"] = input_image.width
 config["input_image_height"] = input_image.height
 ```
 
-### Depth Maps (Optional)
+</details>
+
+## Salient Objects - Extract, Inpaint, Overlay (Optional)
+
+
+<details>
+<summary>Details</summary>
+
+![docs-course_of_empire-input](pictures/docs-course_of_empire-input.jpg)
+
+Input: *Course of Empire - Destruction* by Thomas Cole
+
+#### Salient Object Segmentation
+
+
+![docs-course_of_empire-segmentation_mask](pictures/docs-course_of_empire-segmentation_mask.png)
+
+- GroundingDinoSAMSegment
+- Generalized prompt tags: "salient objects, statue, skyline, skyscraper, pillar, flag, column, building, tree, mountain, planet, asteroid, comet, meteor, rainbow, waterfall, volcano, bridge, tunnel, railway, airport, harbor, clouds, tornado, hurricane, lightning, rays"
+- User input prompts tags: Objects in the input image that span across multiple user-defined layers
+  - In the above photo, it may also create good results to remove the diagonal column/building line on the left. It would create less overall motion in the final output but with more likelife results.
+
+#### Salient Object Removal and Inpainting
+
+
+![docs-course_of_empire-salient_object_removed_inpainted](pictures/docs-course_of_empire-salient_object_removed_inpainted.png)
+
+- This version of the image with the salient object removed and inpainted is used as the start image for the parallax process
+  - Otherwise, the salient objects which span multiple layers will be disjointed beyond acceptable levels (relative to other portions of the image) as the layers move at different speeds
+
+#### Salient Object Alpha Layer Extraction
+
+![docs-course_of_empire-salient_object_alpha_extraction](pictures/docs-course_of_empire-salient_object_alpha_extraction.png)
+
+- In the final video output, the salient object is overlayed onto the video with motion equal to the motion of the lowest layer the object is in (with the common sense assumption that something moves according to the layer its base is in)
+  - Alternatively, the object can be overlayed with little to no motion, which can often create striking/artistic results and serve to highlight the object (see rap video visualizers)
+
+</details>
+
+## Depth Maps Conditioning and Distance Calculation (Optional)
+
+
+<details>
+<summary>Details</summary>
 
 - MiDaS Depth Approximation automatically calculates depth maps for images. This can be used to calculate the depth of each pixel in the image.
 - The depth map serves two purposes, both optional:
   - It can be used to calculate the velocity of each layer, with the velocity being inversely proportional to the depth.
   - It can be used with ControlNet conditioning, to assure that the inpainting process creates intermediate frames with uniform depth.
 
-### Segmentation (Optional)
+</details>
+
+## Initial Layer Segmentation (Optional)
+
+<details>
+<summary>Details</summary>
 
 - GroundingDinoSAMSegment with user input prompts can be used to segment the image into layers. 
 - This provides specific initial shifts for the layers, and is later used to determine the base height for each layer
 
-### Finalize Parameters with User Input
+</details>
+
+## Finalize Parameters with User Input
+
+<details>
+<summary>Details</summary>
+
 
 #### Direction Angle (0-360 degrees)
 
@@ -226,8 +281,12 @@ print_list(
 )
 config["fps"] = int(input("(int) Frame Per Second of the Output Video: "))
 ```
+</details>
 
-### Velocity Calculations
+## Velocity Calculations
+
+<details>
+<summary>Details</summary>
 
 ```python
 # create_config()
@@ -249,7 +308,12 @@ for i in range(num_layers):
     )
 ```
 
-### Number of Steps Calculation
+</details>
+
+## Number of Steps Calculation
+
+<details>
+<summary>Details</summary>
 
 ```python
 # create_config()
@@ -279,10 +343,12 @@ return config
 
 ***NOTE:*** The number of steps will always be the max steps required by the slowest layer. But each layer needs its own steps to determine how many output layers are used in the stitching process.
 
+</details>
 
-### Step Process (Repeated `MAX_STEPS` Times)
+## Step Process 1 - Cropping and Masking (Repeated `MAX_STEPS` Times)
 
-#### 1 - Cropping and Masking
+<details>
+<summary>Details</summary>
 
 1. Crop current step's start image into horizontal layers based on the layer heights
 2. Crop each layer based on its velocity (essentially shifting it outside the base canvas in *velocity* vector distance/direction)
@@ -296,7 +362,13 @@ return config
 ![alt text](pictures/docs-dresden-cropping_and_masking-output.png)
 
 
-### 2 - Inpaint Mask Preprocessing (Optional)
+</details>
+
+## Step Process 2 - Inpaint Mask Preprocessing (Optional) (Repeated `MAX_STEPS` Times)
+
+
+<details>
+<summary>Details</summary>
 
 Each step optional, with user experimentation suggested to determine the best results. Generally, this order should be followed:
 
@@ -315,8 +387,13 @@ Each step optional, with user experimentation suggested to determine the best re
 
 ![alt text](pictures/docs-dresden-inpaint_preprocessing-blurred_mask-output.png)
 
+</details>
 
-### 3 - Inpainting
+
+## Step Process 3 - Inpainting (Repeated `MAX_STEPS` Times)
+
+<details>
+<summary>Details</summary>
 
 - Inpaint the composited layers such that the process uses the entire context.
 - (Optional) Iterative Interrogation/Tagging at each step -> prepend to positive prompt
@@ -327,7 +404,12 @@ Each step optional, with user experimentation suggested to determine the best re
 
 *This output is the start image for the next step*
 
-### 4 - Re-Separate Layers
+</details>
+
+## Step Process 4 - Re-Separate Layers (Repeated `MAX_STEPS` Times)
+
+<details>
+<summary>Details</summary>
 
 Crop the inpainted image back into layers based on the layer heights
 
@@ -350,7 +432,13 @@ for i in range(num_layers):
 
 ![alt text](pictures/docs-dresden-re_separate_layers.png)
 
-### Repeat *Step Process* `MAX_STEPS` Times
+</details>
+
+## Repeat *Step Process* `MAX_STEPS` Times
+
+
+<details>
+<summary>Details</summary>
 
 ```python
 # Psuedocode
@@ -377,8 +465,13 @@ for i in range(MAX_STEPS):
     start = inpainted_output
 ```
 
+</details>
 
-### Create VideoClip for each Layer
+
+## Create VideoClip for each Layer
+
+<details>
+<summary>Details</summary>
 
 1. Crop the inpainted region from each layer step output
 2. Stitch all the cropped regions onto the original associated layer according to the vector of motion
@@ -402,7 +495,12 @@ def make_frame(t):
 layer_videoclip = VideoClip(make_frame, duration=duration)
 ```
 
-### Composite Layer Videos
+</details>
+
+## Composite Layer Videos
+
+<details>
+<summary>Details</summary>
 
 Composite the layer clips onto one another according to the vector of motion in order to create the final video.
 
@@ -439,11 +537,21 @@ def video_from_layer_frames(self):
     print(f"\n\nFinal video saved to {output_path}\n")
 ```
 
-### Frame Interpolation
+</details>
+
+## Frame Interpolation
+
+<details>
+<summary>Details</summary>
 
 Interpolate the frames of each layer to match the FPS of the final video
 
-### Video Editing
+</details>
+
+## Video Editing
+
+<details>
+<summary>Details</summary>
 
 Various techniques can further the illusion of lifelike parallax, such as:
 
@@ -468,14 +576,22 @@ Possible sounds:
 - Voices
 
 
-### Color Correction
+#### Color Correction
 
 ...
 
-### Export Output
+</details>
+
+## Export Output
+
+
+<details>
+<summary>Details</summary>
 
 Important export configuration options
 - Codec
 - Frame blending type
 - Keyframe group size
 - Bitrate
+
+</details>

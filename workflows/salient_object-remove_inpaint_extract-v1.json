@@ -1,0 +1,1362 @@
+{
+  "last_node_id": 28,
+  "last_link_id": 39,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "SAMModelLoader (segment anything)",
+      "pos": [
+        -140,
+        -560
+      ],
+      "size": [
+        360,
+        60
+      ],
+      "flags": {
+        "pinned": false
+      },
+      "order": 0,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "SAM_MODEL",
+          "type": "SAM_MODEL",
+          "links": [
+            1
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SAMModelLoader (segment anything)"
+      },
+      "widgets_values": [
+        "sam_hq_vit_b (379MB)"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 2,
+      "type": "GroundingDinoModelLoader (segment anything)",
+      "pos": [
+        -140,
+        -450
+      ],
+      "size": {
+        "0": 361.20001220703125,
+        "1": 58
+      },
+      "flags": {
+        "pinned": false,
+        "collapsed": false
+      },
+      "order": 1,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "GROUNDING_DINO_MODEL",
+          "type": "GROUNDING_DINO_MODEL",
+          "links": [
+            2
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GroundingDinoModelLoader (segment anything)"
+      },
+      "widgets_values": [
+        "GroundingDINO_SwinT_OGC (694MB)"
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 6,
+      "type": "PrimitiveNode",
+      "pos": [
+        -140,
+        -340
+      ],
+      "size": [
+        360,
+        80
+      ],
+      "flags": {
+        "pinned": false
+      },
+      "order": 2,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            4
+          ],
+          "slot_index": 0,
+          "widget": {
+            "name": "threshold"
+          }
+        }
+      ],
+      "title": "Threshold of segmentation 0.3 base",
+      "properties": {
+        "Run widget replace on values": false
+      },
+      "widgets_values": [
+        0.37,
+        "fixed"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 10,
+      "type": "Note",
+      "pos": [
+        240,
+        -210
+      ],
+      "size": [
+        230,
+        130
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "properties": {
+        "text": ""
+      },
+      "widgets_values": [
+        "Salient object tags should include objects which span across multiple layers (however they are defined)\n\nPerhaps it's better to take user input to determine them"
+      ],
+      "color": "#222",
+      "bgcolor": "#000"
+    },
+    {
+      "id": 12,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1380,
+        -900
+      ],
+      "size": [
+        390,
+        90
+      ],
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 15
+        },
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 11,
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            13
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "CLIP Text Encode (Positive Prompt)",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        ""
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 4,
+      "type": "MaskToImage",
+      "pos": [
+        710,
+        -570
+      ],
+      "size": {
+        "0": 210,
+        "1": 26
+      },
+      "flags": {
+        "collapsed": true,
+        "pinned": false
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 5
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "MaskToImage"
+      },
+      "color": "#2a363b"
+    },
+    {
+      "id": 5,
+      "type": "PreviewImage",
+      "pos": [
+        710,
+        -530
+      ],
+      "size": [
+        280,
+        200
+      ],
+      "flags": {
+        "pinned": false
+      },
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 6
+        }
+      ],
+      "title": "Preview Segmentation Mask",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      }
+    },
+    {
+      "id": 19,
+      "type": "GrowMaskWithBlur",
+      "pos": [
+        710,
+        -290
+      ],
+      "size": [
+        280,
+        220
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 25
+        }
+      ],
+      "outputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            26
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "mask_inverted",
+          "type": "MASK",
+          "links": [],
+          "shape": 3,
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GrowMaskWithBlur"
+      },
+      "widgets_values": [
+        4,
+        0,
+        false,
+        false,
+        0.30000000000000004,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "type": "GroundingDinoSAMSegment (segment anything)",
+      "pos": [
+        300,
+        -420
+      ],
+      "size": {
+        "0": 352.79998779296875,
+        "1": 122
+      },
+      "flags": {
+        "pinned": false,
+        "collapsed": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM_MODEL",
+          "link": 1
+        },
+        {
+          "name": "grounding_dino_model",
+          "type": "GROUNDING_DINO_MODEL",
+          "link": 2
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 7
+        },
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "link": 8,
+          "widget": {
+            "name": "prompt"
+          },
+          "slot_index": 3
+        },
+        {
+          "name": "threshold",
+          "type": "FLOAT",
+          "link": 4,
+          "widget": {
+            "name": "threshold"
+          },
+          "slot_index": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            5,
+            25,
+            37
+          ],
+          "shape": 3,
+          "slot_index": 1
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GroundingDinoSAMSegment (segment anything)"
+      },
+      "widgets_values": [
+        "salient objects, statue, skyscraper, pillar, flag, column",
+        0.37
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 11,
+      "type": "InpaintModelConditioning",
+      "pos": [
+        1120,
+        -510
+      ],
+      "size": {
+        "0": 216.59999084472656,
+        "1": 106
+      },
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 13
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 12
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 14
+        },
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 18
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "links": [
+            19
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "links": [
+            20
+          ],
+          "shape": 3,
+          "slot_index": 1
+        },
+        {
+          "name": "latent",
+          "type": "LATENT",
+          "links": [
+            21
+          ],
+          "shape": 3,
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "InpaintModelConditioning"
+      }
+    },
+    {
+      "id": 17,
+      "type": "KSampler (Efficient)",
+      "pos": [
+        1390,
+        -530
+      ],
+      "size": [
+        325,
+        350
+      ],
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 22
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 19
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 20
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 21
+        },
+        {
+          "name": "optional_vae",
+          "type": "VAE",
+          "link": 23
+        },
+        {
+          "name": "script",
+          "type": "SCRIPT",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "CONDITIONING+",
+          "type": "CONDITIONING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "CONDITIONING-",
+          "type": "CONDITIONING",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": null,
+          "shape": 3
+        },
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            24,
+            28
+          ],
+          "shape": 3,
+          "slot_index": 5
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler (Efficient)"
+      },
+      "widgets_values": [
+        717456717441951,
+        null,
+        35,
+        2.8000000000000003,
+        "dpmpp_2m_sde_gpu",
+        "karras",
+        1,
+        "none",
+        "true"
+      ],
+      "bgcolor": "#335555",
+      "shape": 1
+    },
+    {
+      "id": 18,
+      "type": "PreviewImage",
+      "pos": [
+        1840.534792607033,
+        -765.8580459293531
+      ],
+      "size": [
+        480,
+        310
+      ],
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 24
+        }
+      ],
+      "title": "Output - Salient Object Removed & Inpainted",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 27,
+      "type": "InvertMask",
+      "pos": [
+        1590,
+        -110
+      ],
+      "size": {
+        "0": 210,
+        "1": 26
+      },
+      "flags": {
+        "collapsed": true
+      },
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 37
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            38
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "InvertMask"
+      }
+    },
+    {
+      "id": 24,
+      "type": "PreviewImage",
+      "pos": [
+        1840.534792607033,
+        -395.8580459293525
+      ],
+      "size": [
+        480,
+        280
+      ],
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 34
+        }
+      ],
+      "title": "Output - Salient Object Alpha Layer",
+      "properties": {
+        "Node name for S&R": "PreviewImage"
+      },
+      "color": "#323",
+      "bgcolor": "#535"
+    },
+    {
+      "id": 22,
+      "type": "SaveImage",
+      "pos": [
+        1840.534792607033,
+        -815.8580459293531
+      ],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {
+        "collapsed": true
+      },
+      "order": 23,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 28
+        }
+      ],
+      "properties": {},
+      "widgets_values": [
+        "salient_object_removed"
+      ]
+    },
+    {
+      "id": 25,
+      "type": "JoinImageWithAlpha",
+      "pos": [
+        1540,
+        -60
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {
+        "collapsed": true
+      },
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 32
+        },
+        {
+          "name": "alpha",
+          "type": "MASK",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            34,
+            39
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "JoinImageWithAlpha"
+      }
+    },
+    {
+      "id": 28,
+      "type": "SaveImage",
+      "pos": [
+        1840.534792607033,
+        -75.85804592935244
+      ],
+      "size": {
+        "0": 315,
+        "1": 58
+      },
+      "flags": {
+        "collapsed": true
+      },
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "properties": {},
+      "widgets_values": [
+        "salient_object_alpha_layer"
+      ]
+    },
+    {
+      "id": 14,
+      "type": "WD14Tagger|pysssss",
+      "pos": [
+        1030,
+        -1060
+      ],
+      "size": [
+        320,
+        220
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 9
+        },
+        {
+          "name": "exclude_tags",
+          "type": "STRING",
+          "link": 27,
+          "widget": {
+            "name": "exclude_tags"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            10
+          ],
+          "shape": 6,
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "WD14Tagger|pysssss"
+      },
+      "widgets_values": [
+        "wd-v1-4-moat-tagger-v2",
+        0.35,
+        0.96,
+        false,
+        false,
+        "multiple_girls, multiple_boys, boat, 6+boys",
+        "weapon, water, scenery, shield, city, battle, watercraft, horse"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "CheckpointLoaderSimple",
+      "pos": [
+        760,
+        -780
+      ],
+      "size": [
+        510,
+        100
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            22
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            15,
+            16
+          ],
+          "shape": 3,
+          "slot_index": 1
+        },
+        {
+          "name": "VAE",
+          "type": "VAE",
+          "links": [
+            14,
+            23
+          ],
+          "shape": 3,
+          "slot_index": 2
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CheckpointLoaderSimple"
+      },
+      "widgets_values": [
+        "Stable-diffusion/inpainting/wondermix_V2-inpainting.safetensors"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "LoadImage",
+      "pos": [
+        -40,
+        -1200
+      ],
+      "size": [
+        760,
+        520
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            7,
+            9,
+            18,
+            32
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "title": "Input",
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "Cole_Thomas_The_Course_of_Empire_Destruction_1836 (2).jpg",
+        "image"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "ShowText|pysssss",
+      "pos": [
+        1380,
+        -1080
+      ],
+      "size": [
+        390,
+        130
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 10,
+          "widget": {
+            "name": "text"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            11
+          ],
+          "shape": 6,
+          "slot_index": 0
+        }
+      ],
+      "title": "Auto-Generated Positive Prompt",
+      "properties": {
+        "Node name for S&R": "ShowText|pysssss"
+      },
+      "widgets_values": [
+        "",
+        "weapon, water, scenery, shield, city, battle, watercraft, horse"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 20,
+      "type": "CR Prompt Text",
+      "pos": [
+        940,
+        -1200
+      ],
+      "size": [
+        410,
+        95.99998474121094
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "links": [
+            27
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "show_help",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "title": "Auto Prompt Exclude List",
+      "properties": {
+        "Node name for S&R": "CR Prompt Text"
+      },
+      "widgets_values": [
+        "multiple_girls, multiple_boys, boat, 6+boys"
+      ]
+    },
+    {
+      "id": 13,
+      "type": "CLIPTextEncode",
+      "pos": [
+        1380,
+        -760
+      ],
+      "size": [
+        390,
+        90
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "clip",
+          "type": "CLIP",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "CONDITIONING",
+          "type": "CONDITIONING",
+          "links": [
+            12
+          ],
+          "shape": 3,
+          "slot_index": 0
+        }
+      ],
+      "title": "CLIP Text Encode (Negative Prompt)",
+      "properties": {
+        "Node name for S&R": "CLIPTextEncode"
+      },
+      "widgets_values": [
+        "embedding:embeddings/JuggernautNegative-neg, embedding:embeddings/NegativeDynamics-neg"
+      ],
+      "color": "#322",
+      "bgcolor": "#533"
+    },
+    {
+      "id": 9,
+      "type": "CR Prompt Text",
+      "pos": [
+        -140,
+        -210
+      ],
+      "size": [
+        360,
+        130
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "links": [
+            8
+          ],
+          "shape": 3,
+          "slot_index": 0
+        },
+        {
+          "name": "show_help",
+          "type": "STRING",
+          "links": null,
+          "shape": 3
+        }
+      ],
+      "title": "Generalized Salient Object Tags (Descriptors)",
+      "properties": {
+        "Node name for S&R": "CR Prompt Text"
+      },
+      "widgets_values": [
+        "salient objects, statue, skyscraper, pillar, flag, column"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      3,
+      0,
+      "SAM_MODEL"
+    ],
+    [
+      2,
+      2,
+      0,
+      3,
+      1,
+      "GROUNDING_DINO_MODEL"
+    ],
+    [
+      4,
+      6,
+      0,
+      3,
+      4,
+      "FLOAT"
+    ],
+    [
+      5,
+      3,
+      1,
+      4,
+      0,
+      "MASK"
+    ],
+    [
+      6,
+      4,
+      0,
+      5,
+      0,
+      "IMAGE"
+    ],
+    [
+      7,
+      8,
+      0,
+      3,
+      2,
+      "IMAGE"
+    ],
+    [
+      8,
+      9,
+      0,
+      3,
+      3,
+      "STRING"
+    ],
+    [
+      9,
+      8,
+      0,
+      14,
+      0,
+      "IMAGE"
+    ],
+    [
+      10,
+      14,
+      0,
+      15,
+      0,
+      "STRING"
+    ],
+    [
+      11,
+      15,
+      0,
+      12,
+      1,
+      "STRING"
+    ],
+    [
+      12,
+      13,
+      0,
+      11,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      13,
+      12,
+      0,
+      11,
+      0,
+      "CONDITIONING"
+    ],
+    [
+      14,
+      16,
+      2,
+      11,
+      2,
+      "VAE"
+    ],
+    [
+      15,
+      16,
+      1,
+      12,
+      0,
+      "CLIP"
+    ],
+    [
+      16,
+      16,
+      1,
+      13,
+      0,
+      "CLIP"
+    ],
+    [
+      18,
+      8,
+      0,
+      11,
+      3,
+      "IMAGE"
+    ],
+    [
+      19,
+      11,
+      0,
+      17,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      20,
+      11,
+      1,
+      17,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      21,
+      11,
+      2,
+      17,
+      3,
+      "LATENT"
+    ],
+    [
+      22,
+      16,
+      0,
+      17,
+      0,
+      "MODEL"
+    ],
+    [
+      23,
+      16,
+      2,
+      17,
+      4,
+      "VAE"
+    ],
+    [
+      24,
+      17,
+      5,
+      18,
+      0,
+      "IMAGE"
+    ],
+    [
+      25,
+      3,
+      1,
+      19,
+      0,
+      "MASK"
+    ],
+    [
+      26,
+      19,
+      0,
+      11,
+      4,
+      "MASK"
+    ],
+    [
+      27,
+      20,
+      0,
+      14,
+      1,
+      "STRING"
+    ],
+    [
+      28,
+      17,
+      5,
+      22,
+      0,
+      "IMAGE"
+    ],
+    [
+      32,
+      8,
+      0,
+      25,
+      0,
+      "IMAGE"
+    ],
+    [
+      34,
+      25,
+      0,
+      24,
+      0,
+      "IMAGE"
+    ],
+    [
+      37,
+      3,
+      1,
+      27,
+      0,
+      "MASK"
+    ],
+    [
+      38,
+      27,
+      0,
+      25,
+      1,
+      "MASK"
+    ],
+    [
+      39,
+      25,
+      0,
+      28,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [
+    {
+      "title": "Salient Object Segmentation",
+      "bounding": [
+        -162,
+        -646,
+        1186,
+        590
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "locked": false
+    },
+    {
+      "title": "Output",
+      "bounding": [
+        1809,
+        -909,
+        559,
+        861
+      ],
+      "color": "#3f789e",
+      "font_size": 24,
+      "locked": false
+    }
+  ],
+  "config": {},
+  "extra": {},
+  "version": 0.4
+}

@@ -5,19 +5,21 @@ from constants import (
     PROJECT_DATA_REL_PATH,
     CONFIG_FILENAME,
     ORIGINAL_LAYERS_DIR,
-    VIDEO_CODEC,
-    OUTPUT_VIDEO_PATH,
     OUTPUTS_USER_REL_PATH,
     LAYER_OUTPUT_DIR,
+    SALIENT_OBJECTS_DIR,
+    WORKFLOW_DIR,
+    CROPPED_STEPS_DIR,
+    STITCHED_INPAINT_DIR,
 )
 from .create_config import create_config
-from layers.layer import Layer
+from utils.check_make_dir import check_make_dir
+from interfaces.project_interface import ProjectInterface
+from parallax_video.video import ParallaxVideo
 from PIL import Image
-from moviepy.editor import CompositeVideoClip
-from termcolor import colored
 
 
-class ParallaxProject:
+class ParallaxProject(ProjectInterface):
     """
     Represents a parallax project.
 
@@ -48,111 +50,93 @@ class ParallaxProject:
                 self.author = "Unknown"
         else:
             self.author = author
+
+        self.init_project_structure()
+        self.copy_input_image_to_project_dir()
+        self.input_image = Image.open(self.config_file()["input_image_path"])
+        self.create_original_layer_slices()
+
+        ParallaxVideo(self)
+
+    def init_project_structure(self):
         self.repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        print(f"Repo root: {self.repo_root}")
+
         self.project_dir_path = os.path.join(
             self.repo_root, PROJECT_DATA_REL_PATH, self.name
         )
-        if not self.project_dir_exists():
-            os.makedirs(self.project_dir_path)
-        self.config_path = os.path.join(self.project_dir_path, CONFIG_FILENAME)
-        if not self.project_config_exists():
-            self.set_config()
+        print(f"Project dir path: {self.project_dir_path}")
+
+        if not check_make_dir(self.project_dir_path):
+            print(f"Project directory created at {self.project_dir_path}")
+            self.NEW_PROJECT = True
+        else:
+            self.NEW_PROJECT = False
+        print(f"This is a new project: {self.NEW_PROJECT}")
+
+        self.config_file()
 
         # Create folders for standard project structure
-        self.make_layer_outputs_dir()
-        self.make_workflow_dir()  # TODO - copy copy of template workflow named to match project name
-
-        self.copy_input_image_to_project_dir()
-        self.input_image = Image.open(self.get_config()["input_image_path"])
-
-        if (
-            input(
-                f"Have you finished inpainting the layers and putting the outputs in {self.project_dir_path}/{LAYER_OUTPUT_DIR}? (y/n): "
-            ).lower()
-            != "y"
-        ):
-            print(colored("Please do so and then run the script again.", "red"))
-            exit()
-        
-        self.create_original_layer_slices()
-
-        self.layers = []
-        for index, layer in enumerate(self.get_config()["layers"]):
-            name_prefix = f"layer_{index+1}"
-            self.layers.append(Layer(self.get_config(), layer, name_prefix))
-
-
-        for layer in self.layers:
-            layer.create_cropped_steps()
-            layer.stitch_cropped_steps()
-
-        self.layer_clips = []
-        x = 0
-        y = 0
-        for layer, layer_config in zip(self.layers, self.get_config()["layers"]):
-            layer_videoclip = layer.create_layer_videoclip()
-            layer_videoclip = layer_videoclip.set_position((x, y))
-            self.layer_clips.append(layer_videoclip)
-            y += layer_config["height"]
-
-        self.video_from_layer_frames()
+        self.layer_outputs_dir()
+        self.salient_objects_dir()
+        self.workflow_dir()  # TODO - copy copy of template workflow named to match project name
 
     def update_config(self, key, value):
-        config = self.get_config()
+        config = self.config_file()
         config[key] = value
         with open(self.config_path, "w") as config_file:
             json.dump(config, config_file, indent=4)
 
-    def make_workflow_dir(self):
-        if not os.path.exists(os.path.join(self.project_dir_path, "workflow")):
-            os.makedirs(os.path.join(self.project_dir_path, "workflow"))
+    def config_file(self):
+        path = os.path.join(self.project_dir_path, CONFIG_FILENAME)
+        self.config_path = path
+        if not os.path.exists(path):
+            self.set_config()
 
-    def make_layer_outputs_dir(self):
-        if not os.path.exists(os.path.join(self.project_dir_path, LAYER_OUTPUT_DIR)):
-            os.makedirs(os.path.join(self.project_dir_path, LAYER_OUTPUT_DIR))
+        with open(path, "r") as config_file:
+            return json.load(config_file)
 
-    def video_from_layer_frames(self):
-        """
-        Create a final video from the frames.
+    def workflow_dir(self):
+        path = os.path.join(self.project_dir_path, WORKFLOW_DIR)
+        check_make_dir(path)
+        # Add workflow logic
+        return path
 
-        self.layer_clips is a list of lists of VideoClip instances.
-        Each list of VideoClip instances represents a layer.
-        The layers should be stacked according to the vector of motion.
+    def layer_outputs_dir(self):
+        path = os.path.join(self.project_dir_path, LAYER_OUTPUT_DIR)
+        check_make_dir(path)
+        # Add layer outputs logic
+        return path
 
-        This function creates a final video by compositing the layer clips and saving it to the specified output path.
-        """
+    def salient_objects_dir(self):
+        path = os.path.join(self.project_dir_path, SALIENT_OBJECTS_DIR)
+        check_make_dir(path)
+        # Add salient objects logic
+        return path
 
-        video_composite = CompositeVideoClip(
-            self.layer_clips, size=self.input_image.size
-        )
+    def original_layers_dir(self):
+        path = os.path.join(self.project_dir_path, ORIGINAL_LAYERS_DIR)
+        check_make_dir(path)
+        # Add original layers logic
+        return path
 
-        output_dir = os.path.join(self.project_dir_path, OUTPUT_VIDEO_PATH)
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        output_path = os.path.join(output_dir, f"{self.name}-final_parallax_video.mp4")
+    def cropped_steps_dir(self):
+        path = os.path.join(self.project_dir_path, CROPPED_STEPS_DIR)
+        check_make_dir(path)
+        # Add cropped steps logic
+        return path
 
-        video_composite.write_videofile(
-            output_path,
-            codec=VIDEO_CODEC,
-            fps=self.get_config()["fps"],
-        )
+    def stitched_inpainted_dir(self):
+        path = os.path.join(self.project_dir_path, STITCHED_INPAINT_DIR)
+        check_make_dir(path)
+        # Add stitched inpainted logic
+        return path
 
-        # Make copy in user outputs directory
-        user_outputs_dir = os.path.join(self.repo_root, OUTPUTS_USER_REL_PATH)
-        if not os.path.exists(user_outputs_dir):
-            os.makedirs(user_outputs_dir)
-        user_output_path = os.path.join(
-            user_outputs_dir, f"{self.name}-final_parallax_video.mp4"
-        )
-
-        try:
-            os.system(f"cp {output_path} {user_output_path}")
-        except Exception as e:
-            print(
-                f"Couldn't copy final video to user outputs: {e}. Use the project folder"
-            )
-
-        print(f"\n\nFinal video saved to {output_path}\n")
+    def output_video_dir(self):
+        path = os.path.join(self.project_dir_path, OUTPUTS_USER_REL_PATH)
+        check_make_dir(path)
+        # Add output video logic
+        return path
 
     def create_original_layer_slices(self):
         """
@@ -165,29 +149,19 @@ class ParallaxProject:
         Returns:
             None
         """
-        # Make dir if it doesn't exist
-        if not os.path.exists(os.path.join(self.project_dir_path, ORIGINAL_LAYERS_DIR)):
-            os.makedirs(os.path.join(self.project_dir_path, ORIGINAL_LAYERS_DIR))
         x = 0
         y = 0
+        # TODO: Full vector range logic
         width = self.input_image.width
-        for index, layer in enumerate(self.get_config()["layers"]):
+        for index, layer in enumerate(self.config_file()["layers"]):
             height = layer["height"]
             input_layer_image = self.input_image.crop((x, y, x + width, y + height))
             input_layer_image.save(
                 os.path.join(
-                    self.project_dir_path,
-                    ORIGINAL_LAYERS_DIR,
-                    f"layer_{index+1}-original_layer_slice.png",
+                    self.original_layers_dir(), f"original_layer_{index+1}.png"
                 )
             )
             y += height
-
-    def project_dir_exists(self):
-        return os.path.exists(self.project_dir_path)
-
-    def project_config_exists(self):
-        return os.path.exists(self.config_path)
 
     def set_config(self):
         config = create_config()
@@ -198,12 +172,8 @@ class ParallaxProject:
         with open(self.config_path, "w") as config_file:
             json.dump(config, config_file, indent=4)
 
-    def get_config(self):
-        with open(self.config_path, "r") as config_file:
-            return json.load(config_file)
-
     def copy_input_image_to_project_dir(self):
-        config = self.get_config()
+        config = self.config_file()
         input_image_path = config["original_input_image_path"]
         input_image_filename = os.path.basename(input_image_path)
         input_image_dest_path = os.path.join(

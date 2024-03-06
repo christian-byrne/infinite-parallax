@@ -11,6 +11,8 @@ DEV = True
 VIDEO_CODEC = "libx264"
 OUTPUT_VIDEO_PATH = "output"
 OUTPUTS_USER_REL_PATH = "outputs"
+SALIENT_OBJECTS_DIR = "salient_objects"
+WORKFLOW_DIR = "project_workflows"
 DEFAULT_DISTANCES = {
     "cloud_layer": {
         "mathematically_accurate_distance": 16.18,
