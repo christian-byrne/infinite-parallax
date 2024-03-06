@@ -53,7 +53,7 @@ class ParallaxProject(ProjectInterface):
             self.input_image = Image.open(self.config_file()["input_image_path"])
             self.create_original_layer_slices()
 
-        # x = SalientObjectLayer(self, "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/salient_objects/salient_object_alpha_layer_00001_.png", 1)
+        x = SalientObjectLayer(self, 1)
         # ParallaxVideo(self)
 
     def init_project_structure(self):

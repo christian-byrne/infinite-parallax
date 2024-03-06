@@ -19,6 +19,8 @@ LOGS_DIR = "logs"
 COMFY_PORT = 8188
 COMFY_API_MAX_CONNECT_ATTEMPTS = 15
 SALIENT_OBJECTS_WORKFLOW_PATH = "workflows/api/salient_object/salient_object-remove_inpaint_extract-v1-API_VERSION.json"
+SALIENT_OBJECT_ALPHA_LAYER_PREFIX = "salient_object_alpha_layer"
+BASE_LAYER_WITHOUT_OBJECTS_PREFIX = "salient_object_removed"
 DEFAULT_DISTANCES = {
     "cloud_layer": {
         "mathematically_accurate_distance": 16.18,

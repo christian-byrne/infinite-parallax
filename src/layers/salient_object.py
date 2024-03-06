@@ -1,34 +1,147 @@
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
 import os
+import json
+import shutil
 from PIL import Image
+from comfy_api.client import ComfyClient
 from utils.check_make_dir import check_make_dir
 from utils.update_path_parts import update_path_parts
 from log.logging import Logger
 from termcolor import colored
 
-from constants import DEV, FEATHERING_MARGIN
+from constants import (
+    SALIENT_OBJECTS_WORKFLOW_PATH,
+    FEATHERING_MARGIN,
+    COMFY_PATH,
+    SALIENT_OBJECT_ALPHA_LAYER_PREFIX,
+    BASE_LAYER_WITHOUT_OBJECTS_PREFIX,
+)
 
 
 class SalientObjectLayer(LayerInterface):
-    def __init__(
-        self, project: ProjectInterface, alpha_layer_fullpath, object_index: int
-    ):
+    def __init__(self, project: ProjectInterface, object_index: int):
         self.project = project
         self.index = object_index
-        self.alpha_layer_fullpath = alpha_layer_fullpath
         self.logger = Logger(
             self.project.name, self.project.author, self.project.version
         )
-        
-        self.set_original_layer()
 
+        root_path = os.path.join(
+            os.path.dirname(__file__).split("infinite-parallax")[0], "infinite-parallax"
+        )
+        self.template_workflow_path = os.path.join(
+            root_path, SALIENT_OBJECTS_WORKFLOW_PATH
+        )
+        self.logger.log(f"Template Workflow path: {self.template_workflow_path}")
+
+        # load json data from workflow
+        with open(self.template_workflow_path, "r") as f:
+            self.workflow = json.load(f)
+
+        # Copy project's input image to comfy input folder if it's not already there
+        comfy_input_folder = os.path.join(COMFY_PATH, "input")
+        pic_name = os.path.basename(self.project.config_file()["input_image_path"])
+        comfy_input_path = os.path.join(comfy_input_folder, pic_name)
+        if not os.path.exists(comfy_input_path):
+            self.logger.log(
+                f"Copying project's input image to comfy input folder: {comfy_input_folder}"
+            )
+            shutil.copy(
+                self.project.config_file()["input_image_path"], comfy_input_folder
+            )
+        else:
+            self.logger.log(
+                f"Project's input image already exists in comfy input folder: {comfy_input_folder}"
+            )
+
+        # Find {class_type : LoadImage} node in workflow and replace inputs.image with pic_name
+        load_image_index = None
+        for node_index, node in self.workflow.items():
+            if node["class_type"] == "LoadImage":
+                load_image_index = node_index
+                break
+        if load_image_index:
+            self.workflow[load_image_index]["inputs"]["image"] = pic_name
+        else:
+            raise ValueError("LoadImage node not found in salient object workflow")
+
+        # Change other aspects of the workflow here
+
+        # Save the modified workflow to this project's individual workflow dir (same name but prefixed with the project name)
+        path = os.path.join(
+            self.project.workflow_dir(),
+            f"{self.project.name}_salient_object_workflow.json",
+        )
+        with open(path, "w") as f:
+            json.dump(self.workflow, f, indent=4)
+        self.workflow_path = path
+        self.logger.log(
+            f"Custom Salient object workflow path for this project: {self.workflow_path}"
+        )
+
+        # Construct comfy client with the custom workflow
+        self.comfy = ComfyClient(self.project, self.workflow_path)
+        self.comfy.queue_workflow()
+
+        # Identify the most recent file in the comfy output folder that has the alpha layer prefix in its basename
+        comfy_output_folder = os.path.join(COMFY_PATH, "output")
+        alpha_layer_files = [
+            file
+            for file in os.listdir(comfy_output_folder)
+            if SALIENT_OBJECT_ALPHA_LAYER_PREFIX in file
+        ]
+        alpha_layer_files.sort(
+            key=lambda x: os.path.getmtime(os.path.join(comfy_output_folder, x))
+        )
+        self.alpha_layer_fullpath = os.path.join(
+            comfy_output_folder, alpha_layer_files[-1]
+        )
+        self.logger.log(
+            f"Most recent alpha layer file in comfy output folder: {self.alpha_layer_fullpath}"
+        )
+        shutil.copy(self.alpha_layer_fullpath, self.project.salient_objects_dir())
+
+        # TODO: the inpainted base layer (with the salient object removed) serves as the new base image for the slicing, inpainting, etc.
+
+        # Identify the most recent file in the comfy output folder that has the base layer without objects prefix in its basename
+        base_layer_files = [
+            file
+            for file in os.listdir(comfy_output_folder)
+            if BASE_LAYER_WITHOUT_OBJECTS_PREFIX in file
+        ]
+        base_layer_files.sort(
+            key=lambda x: os.path.getmtime(os.path.join(comfy_output_folder, x))
+        )
+        self.base_layer_fullpath = os.path.join(
+            comfy_output_folder, base_layer_files[-1]
+        )
+        self.logger.log(
+            f"Most recent base layer file in comfy output folder: {self.base_layer_fullpath}"
+        )
+
+        # Copy the base layer to the project dir named "input-base_layer_no_objects"
+        base_layer_dest_path = self.project.config_file()["project_dir_path"]
+        base_layer_dest_path = os.path.join(
+            base_layer_dest_path, "input-base_layer_no_objects.png"
+        )
+        shutil.copy(self.base_layer_fullpath, base_layer_dest_path)
+        # Update the project's config file with the new base layer path
+        # TODO: create new property specifying the path to the old input image prior to separation with salient object(s)
+        self.project.update_config("input_image_path", base_layer_dest_path)
+
+        self.set_original_layer()
         self.set_layer_breakpoints()
         self.set_parent_layer()
-        self.layer_config = self.project.config_file()["layers"][self.parent_layer_index]
-        self.logger.log(f"Parent layer for salient object {self.index} determined as: layer_{self.parent_layer_index+1}")
+        self.layer_config = self.project.config_file()["layers"][
+            self.parent_layer_index
+        ]
+        self.logger.log(
+            f"Parent layer for salient object {self.index} determined as: layer_{self.parent_layer_index+1}"
+        )
         self.logger.log(f"Parent layer config: {self.layer_config}")
         self.name_prefix = f"salient_object_{self.index}"
+
         exit()
 
         self.slide_distance = 0
@@ -58,7 +171,9 @@ class SalientObjectLayer(LayerInterface):
             return
 
         for layer in layer_configs[:-1]:
-            self.layer_height_breakpoints.append(self.layer_height_breakpoints[-1] + layer["height"])
+            self.layer_height_breakpoints.append(
+                self.layer_height_breakpoints[-1] + layer["height"]
+            )
 
     def find_lowest_non_alpha_pixel(self):
         width, height = self.original_layer["image"].size
