@@ -26,7 +26,7 @@ class Logger:
         )
         self.prefix_string = "[DEVMODE] "
         self.prefix_colored = colored(self.prefix_string, "red")
-        self.prefix_whitespace = " " * (len(self.prefix_string) - 1)
+        self.prefix_whitespace = " " * len(self.prefix_string)
         self.max_text_line_length = self.terminal_length - (len(self.prefix_string) + 1)
 
     def session_log_exists(self):
@@ -53,12 +53,12 @@ class Logger:
     def set_log_file_fullpath(self):
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         repo_root = os.path.dirname(repo_root)
-        logs_dir = os.path.join(repo_root, LOGS_DIR)
-        check_make_dir(logs_dir)
+        self.logs_dir = os.path.join(repo_root, LOGS_DIR)
+        check_make_dir(self.logs_dir)
         log_filename = (
             f"logs-{self.project_name}-{self.author}-{time.strftime('%m_%d_%Y-%I_%M')}.log"
         )
-        self.log_file_fullpath = os.path.join(logs_dir, log_filename)
+        self.log_file_fullpath = os.path.join(self.logs_dir, log_filename)
 
     def format_log_message(self, *args, color_text: bool) -> str:
         in_string = " ".join(map(str, args))

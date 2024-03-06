@@ -17,6 +17,7 @@ from utils.check_make_dir import check_make_dir
 from interfaces.project_interface import ProjectInterface
 from parallax_video.video import ParallaxVideo
 from layers.salient_object import SalientObjectLayer
+from comfy_api.client import ComfyClient
 from PIL import Image
 from termcolor import colored
 
@@ -52,8 +53,7 @@ class ParallaxProject(ProjectInterface):
             self.input_image = Image.open(self.config_file()["input_image_path"])
             self.create_original_layer_slices()
 
-
-        x = SalientObjectLayer(self, "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/salient_objects/salient_object_alpha_layer_00001_.png", 1)
+        # x = SalientObjectLayer(self, "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/salient_objects/salient_object_alpha_layer_00001_.png", 1)
         # ParallaxVideo(self)
 
     def init_project_structure(self):
