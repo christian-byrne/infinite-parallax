@@ -34,6 +34,8 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
     - [ ] Easiest solution is to just mask salient objects and then overlay the mask on all frames in the same position (works with very tall building in skyline or statues in midground)
   - [ ] Edit methods to handle non-rectangular layers (CompositeVideoClip)
   - [ ] User create config -> salient object tags, exclude, character threshold, etc.
+- [ ] Depth Maps documentation
+- [ ] Segment initial layers documentation
 - [ ] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
   - [ ] negative velocity testing

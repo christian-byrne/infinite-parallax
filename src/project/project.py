@@ -16,6 +16,7 @@ from .create_config import create_config
 from utils.check_make_dir import check_make_dir
 from interfaces.project_interface import ProjectInterface
 from parallax_video.video import ParallaxVideo
+from layers.salient_object import SalientObjectLayer
 from PIL import Image
 from termcolor import colored
 
@@ -43,14 +44,17 @@ class ParallaxProject(ProjectInterface):
 
         self.init_project_structure()
 
-        if self.NEW_PROJECT or True:
+        # if self.NEW_PROJECT or True:
+        if self.NEW_PROJECT:
             # perhaps it's best to try to re-copy image and re-create original layers everytime
             # because maybe the user wants to change the input image but keep everything else (config, etc.)
             self.copy_input_image_to_project_dir()
             self.input_image = Image.open(self.config_file()["input_image_path"])
             self.create_original_layer_slices()
 
-        ParallaxVideo(self)
+
+        x = SalientObjectLayer(self, "/home/c_byrne/projects/infinite-parallax/src/data/projects/course-of-empire/salient_objects/salient_object_alpha_layer_00001_.png", 1)
+        # ParallaxVideo(self)
 
     def init_project_structure(self):
         cprint = lambda head, text: print(colored(head, "yellow") + text + "\n", end="")

@@ -131,3 +131,17 @@ class LayerInterface(Protocol):
             VideoClip: The created video clip.
         """
         ...
+
+    def set_original_layer(self) -> None:
+        """
+        Sets the original layer for the current layer.
+
+        This method sets the original layer image for the layer.
+        The original layer is simply the slice of the input image that corresponds to the layer's dimensions.
+        In the case of an object layer, the original layer is the alpha layer of the object after
+        it has been extracted from the input image and joined with an alpha layer of the same size (i.e., a cutout)
+
+        Returns:
+            None
+        """
+        ...

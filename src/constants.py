@@ -12,6 +12,7 @@ VIDEO_CODEC = "libx264"
 OUTPUT_VIDEO_PATH = "output"
 SALIENT_OBJECTS_DIR = "salient_objects"
 WORKFLOW_DIR = "project_workflows"
+LOGS_DIR = "logs"
 DEFAULT_DISTANCES = {
     "cloud_layer": {
         "mathematically_accurate_distance": 16.18,

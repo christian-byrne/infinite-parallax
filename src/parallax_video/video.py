@@ -1,7 +1,7 @@
 from termcolor import colored
 from moviepy.editor import CompositeVideoClip, VideoClip
 from PIL import Image
-from layers.layer import Layer
+from layers.base import BaseLayer
 import os
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
@@ -48,7 +48,7 @@ class ParallaxVideo:
         layers = []
         for index, layer_config in enumerate(self.project.config_file()["layers"]):
             name_prefix = f"layer_{index+1}"
-            layers.append(Layer(self.project, layer_config, name_prefix, index + 1))
+            layers.append(BaseLayer(self.project, layer_config, name_prefix, index + 1))
 
         return layers
 
