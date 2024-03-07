@@ -30,12 +30,29 @@ class ComfyServer:
         self.comfy_compatible_python_ver = "3.10.6"
         self.comfy_launcher_target = os.path.join(COMFY_PATH, "main.py")
 
-        self.set_python_path()
+        self.__set_python_path()
         self.main_thread_logger.log(
-            f"This is the command that will be used to start comfy: {self.get_comfy_cli_args()}"
+            f"This is the command that will be used to start comfy: {self.__get_comfy_cli_args()}"
         )
 
-    def get_comfy_cli_args(self):
+    def start(self):
+        """Wrapper for server so that it can be wrapped in try/except block that terminates the server on error"""
+        try:
+            self.__launch_process()
+            self.main_thread_logger.log("Comfy server started")
+        except Exception as e:
+            self.main_thread_logger.log(f"Error starting comfy server: {e}")
+            self.kill()
+
+    def kill(self):
+        if self.server_process:
+            self.server_process.terminate()
+            self.server_process.wait()
+            self.main_thread_logger.log("Comfy server stopped")
+        else:
+            self.main_thread_logger.log("No Comfy server to stop")
+
+    def __get_comfy_cli_args(self):
         """https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/cli_args.py"""
         # TODO: --extra-model-paths-config PATH [PATH . . . ] Load one or more extra_model_paths.yaml files. Load models specific to this project
         return [
@@ -47,8 +64,9 @@ class ComfyServer:
             self.output_directory,
             "--input-directory",
             self.input_directory,
-            "--preview-method",
-            "none",
+            # Maybe need previews to be enabled for api client listener
+            # "--preview-method",
+            # "none",
             "--disable-auto-launch",
             "--disable-metadata",
             # --cuda-device [CUDA_DEVICE_INDEX],
@@ -59,7 +77,7 @@ class ComfyServer:
         ]
 
     # TODO: an actual solution for this (e.g., get python 3.8 in venv for starting comfy)
-    def set_python_path(self):
+    def __set_python_path(self):
         self.main_thread_logger.log(
             f"Trying to find path to python version compatible with comfy server: version {self.comfy_compatible_python_ver}"
         )
@@ -92,7 +110,7 @@ class ComfyServer:
 
         self.main_thread_logger.log(f"Using python path: {self.python_path}")
 
-    def start(self):
+    def __launch_process(self):
         # TODO: not sure if changing directories and then switching back is necessary
         original_dir = os.getcwd()
 
@@ -101,29 +119,21 @@ class ComfyServer:
             with request.urlopen(self.server_url) as f:
                 if f.status == 200:
                     self.main_thread_logger.log(
-                        "Comfy server status: already running, connecting to existing server"
+                        "Comfy server status: Already running, connecting to existing server"
                     )
                     return
         except (error.URLError, error.HTTPError, KeyError):
             self.main_thread_logger.log(
-                "Comfy server status: not running. Starting new server in detached process"
+                "Comfy server status: Not running. Starting new server in detached process"
             )
 
         os.chdir(COMFY_PATH)
         # Launch the server subprocess, don't wait for it to finish, and redirect its output to server log file
         server_log = open(self.detached_server_logger.log_file_fullpath, "w")
         self.server_process = subprocess.Popen(
-            self.get_comfy_cli_args(),
+            self.__get_comfy_cli_args(),
             stdout=server_log,
             stderr=server_log,
             start_new_session=True,
         )
         os.chdir(original_dir)
-
-    def terminate(self):
-        if self.server_process:
-            self.server_process.terminate()
-            self.server_process.wait()
-            self.main_thread_logger.log("Comfy server stopped")
-        else:
-            self.main_thread_logger.log("No Comfy server to stop")

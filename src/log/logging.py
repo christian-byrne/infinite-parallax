@@ -5,6 +5,7 @@ import time
 from utils.check_make_dir import check_make_dir
 from interfaces.logger_interface import LoggerInterface
 
+
 class Logger(LoggerInterface):
     def __init__(self, project_name: str, author="", version="0.1.0"):
         self.project_name = project_name.replace(" ", "_")
@@ -19,7 +20,7 @@ class Logger(LoggerInterface):
         self.RULE_COLOR = "light_red"
         self.PREFIX_COLOR = "red"
 
-        self.terminal_length = os.get_terminal_size().columns
+        self.terminal_length = os.get_terminal_size().columns - 2
         self.horizontal_rule = "\n" + "—" * (self.terminal_length - 4) + "\n"
         self.horizontal_rule_colored = (
             "\n" + colored("—" * (self.terminal_length - 4), self.RULE_COLOR) + "\n"
@@ -60,13 +61,13 @@ class Logger(LoggerInterface):
 
     def get_top_horizontal_rule(self, color_text: bool) -> str:
         # Top horizontal rule should have hours:minutes in the 3/4th of the terminal width, still surrounded by emdashes
-        cur_time = time.strftime("%H:%M%p")
-        one_fourth = (self.terminal_length - len(cur_time) + 2) // 4
+        cur_time = f" {time.strftime('%I:%M%p')} "
+        one_fourth = (self.terminal_length - len(cur_time)) // 4
         three_fourths = 3 * one_fourth
-        rule = f"\n{'—' * one_fourth}{cur_time}{'—' * three_fourths}"
+        rule = f"\n{'—' * three_fourths}{cur_time}{'—' * one_fourth}\n"
         return colored(rule, self.RULE_COLOR) if color_text else rule
 
-    def format_log_message(self, *args, color_text: bool) -> str:
+    def format_log_message(self, *args, color_text: bool, pad_with_rules) -> str:
         in_string = " ".join(map(str, args))
         message_parts = in_string.split(":")
         if len(message_parts) == 1:
@@ -86,13 +87,14 @@ class Logger(LoggerInterface):
             text_formatted += char
             char_index += 1
 
-        top_horizontal_rule = self.get_top_horizontal_rule(color_text)
+        top_horizontal_rule = self.get_top_horizontal_rule(color_text) if pad_with_rules else ""
         prefix = self.prefix_colored if color_text else self.prefix_string
 
         colored_title = colored(title, "light_cyan") if color_text else title
-        bot_horizontal_rule = (
-            self.horizontal_rule_colored if color_text else self.horizontal_rule
-        )
+        if pad_with_rules:
+            bot_horizontal_rule = self.horizontal_rule_colored if color_text else self.horizontal_rule
+        else:
+            bot_horizontal_rule = ""
 
         return (
             top_horizontal_rule
@@ -102,7 +104,13 @@ class Logger(LoggerInterface):
             + bot_horizontal_rule
         )
 
-    def log(self, *args, print_to_console: bool = DEV, write_to_log: bool = True):
+    def log(
+        self,
+        *args,
+        print_to_console: bool = DEV,
+        write_to_log: bool = True,
+        pad_with_rules: bool = True,
+    ):
         """
         Prints the formatted message to the console if DEV is True,
         and logs the formatted message.
@@ -111,10 +119,18 @@ class Logger(LoggerInterface):
             *args: Variable number of arguments to be formatted and logged.
         """
         if print_to_console:
-            print(self.format_log_message(*args, color_text=True))
+            print(
+                self.format_log_message(
+                    *args, color_text=True, pad_with_rules=pad_with_rules
+                )
+            )
 
         if write_to_log:
             with open(
                 self.log_file_fullpath, "a" if self.session_log_exists() else "w"
             ) as log_file:
-                log_file.write(self.format_log_message(*args, color_text=False))
+                log_file.write(
+                    self.format_log_message(
+                        *args, color_text=False, pad_with_rules=pad_with_rules
+                    )
+                )

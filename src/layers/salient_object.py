@@ -1,5 +1,6 @@
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
+from interfaces.logger_interface import LoggerInterface
 import os
 import json
 import shutil
@@ -20,18 +21,13 @@ from constants import (
 
 
 class SalientObjectLayer(LayerInterface):
-    def __init__(self, project: ProjectInterface, object_index: int):
+    def __init__(self, project: ProjectInterface, logger: LoggerInterface, object_index: int):
         self.project = project
         self.index = object_index
-        self.logger = Logger(
-            self.project.name, self.project.author, self.project.version
-        )
+        self.logger = logger
 
-        root_path = os.path.join(
-            os.path.dirname(__file__).split("infinite-parallax")[0], "infinite-parallax"
-        )
         self.template_workflow_path = os.path.join(
-            root_path, SALIENT_OBJECTS_WORKFLOW_PATH
+            self.project.repo_root, SALIENT_OBJECTS_WORKFLOW_PATH
         )
         self.logger.log(f"Template Workflow path: {self.template_workflow_path}")
 

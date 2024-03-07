@@ -1,12 +1,11 @@
 # Ignore all PNG, JPG, JPEG, MOV, MP4, MPEG, SVG, WEBM, WEBP files in the projects directory,
 # except in projects/demo, projects/example, and projects/wiki
-**/projects/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
-projects/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
+**/projects/**/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
 
 # Exclude the specified directories from the above rules
-**/!projects/demo/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
-**/!projects/example/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
-**/!projects/wiki/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
+**/!projects/demo*/**/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
+**/!projects/example*/**/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
+**/!projects/wiki*/**/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
 
 #
 # ------------------ General -------------------
@@ -15,6 +14,8 @@ projects/*.@(png|jpg|jpeg|mov|mp4|mpeg|svg|webm|webp)
 # Ignore temporary files with various extensions
 **/notes.*
 **/temp.*
+**/temp-*.md
+**/temp-*.txt
 **/*.bak       # Backup files
 **/*.swp       # Vim swap files
 **/*~          # Backup files (Emacs)

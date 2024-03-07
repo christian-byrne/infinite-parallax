@@ -1,0 +1,205 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 624153858033858,
+      "steps": 50,
+      "cfg": 7.5,
+      "sampler_name": "euler",
+      "scheduler": "karras",
+      "denoise": 0.55,
+      "model": [
+        "4",
+        0
+      ],
+      "positive": [
+        "21",
+        0
+      ],
+      "negative": [
+        "21",
+        1
+      ],
+      "latent_image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "Stable-diffusion/vibrant/dreamshaper_8.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": [
+        "14",
+        0
+      ],
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "embedding:embeddings/JuggernautNegative-neg, embedding:embeddings/NegativeDynamics-neg, ",
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "test_image",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "13": {
+    "inputs": {
+      "image": "test-image-jpg-472x263 (1).jpg",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "14": {
+    "inputs": {
+      "wildcard_text": "short_hair, closed_mouth, monochrome, greyscale, male_focus, 1boy, 1girl, couple, looking_at_another, from_side, vampire,  __style_movie__,  {__characters/magical-beings/vampire/characteristics__ | __characters/magical-beings/vampire/prompt__ | __70s/scenes/70s_movie_scenes__ |  __other_movie_horror__ }",
+      "populated_text": "short_hair, closed_mouth, monochrome, greyscale, male_focus, 1boy, 1girl, couple, looking_at_another, from_side, vampire,  Supernatural Romance Movie Style,    \"A Nightmare on Elm Street\" ",
+      "mode": true,
+      "seed": 1001000214395901,
+      "Select to add Wildcard": "Select the Wildcard to add to the text"
+    },
+    "class_type": "ImpactWildcardProcessor",
+    "_meta": {
+      "title": "ImpactWildcardProcessor"
+    }
+  },
+  "16": {
+    "inputs": {
+      "pixels": [
+        "13",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "18": {
+    "inputs": {
+      "control_net_name": "ControlNet/control_v11p_sd15_openpose.pth"
+    },
+    "class_type": "ControlNetLoader",
+    "_meta": {
+      "title": "Load ControlNet Model"
+    }
+  },
+  "20": {
+    "inputs": {
+      "detect_hand": "enable",
+      "detect_body": "disable",
+      "detect_face": "enable",
+      "resolution": 704,
+      "bbox_detector": "yolox_l.torchscript.pt",
+      "pose_estimator": "dw-ll_ucoco_384_bs5.torchscript.pt",
+      "image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "DWPreprocessor",
+    "_meta": {
+      "title": "DWPose Estimator"
+    }
+  },
+  "21": {
+    "inputs": {
+      "strength": 1,
+      "start_percent": 0,
+      "end_percent": 0.98,
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "control_net": [
+        "18",
+        0
+      ],
+      "image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "ControlNetApplyAdvanced",
+    "_meta": {
+      "title": "Apply ControlNet (Advanced)"
+    }
+  },
+  "22": {
+    "inputs": {
+      "image": "$22-0",
+      "images": [
+        "20",
+        0
+      ]
+    },
+    "class_type": "PreviewBridge",
+    "_meta": {
+      "title": "Preview Bridge (Image)"
+    }
+  }
+}
