@@ -27,9 +27,10 @@ class BaseLayer(LayerInterface):
         self.__set_original_layer()
         self.set_step_images()
 
-        self.duration = int(
+        self.duration = (
             self.total_steps * self.project.config_file()["seconds_per_step"]
         )
+
         self.output_vid_width = self.original_layer["image"].width
 
     def get_x_velocity(self):
@@ -60,10 +61,6 @@ class BaseLayer(LayerInterface):
         return width
 
     def __set_original_layer(self):
-        if DEV:
-            print(colored(f"Setting original layer for {self.name_prefix}", "yellow"))
-            print(f"Original layers dir: {self.project.original_layers_dir()}")
-
         for original_layer in os.listdir(self.project.original_layers_dir()):
             # E.g., if the layer is layer_1, the original layer should be 1_original_layer.png
             if original_layer.startswith(str(self.index)):
@@ -100,7 +97,6 @@ class BaseLayer(LayerInterface):
         self.cropped_step_images = []
 
         for step_image in self.step_images:
-            # Skip first image (the unaltered region of the original input layer)
             # NOTE: Ignore the first image
             # TODO: this is a temporary fix for the problem of the comfyUI workflow saving the layers of the original input image as well
             if step_image == self.step_images[0]:
@@ -120,12 +116,10 @@ class BaseLayer(LayerInterface):
 
             cropped_image = image.crop((x, y, x + width, y + height))
             cropped_step_image["image"] = cropped_image
-            # save with cropped prefix
             filename = f"cropped-{step_image['filename']}"
             output_dir = os.path.join(
                 self.project.cropped_steps_dir(), f"{self.name_prefix}_cropped_steps"
             )
-            # If the directory doesn't exist, create it
             check_make_dir(output_dir)
             fullpath = os.path.join(output_dir, filename)
             cropped_image.save(fullpath)
@@ -171,7 +165,6 @@ class BaseLayer(LayerInterface):
         image_clip = ImageClip(self.stitched_inpainted_regions["fullpath"])
 
         def make_frame(t):
-            # Print progress and x-coordinate of the layer every 10 seconds if devmode
             if DEV and t % 10 == 0 and t != 0:
                 print(
                     colored(f"Layer_{self.name_prefix} at {t}seconds", "light_green"),
@@ -187,6 +180,8 @@ class BaseLayer(LayerInterface):
                 )
 
             x = int(self.slide_distance * (t / self.duration))
+            # frame_from_pil = pil_image.crop((x, 0, x + self.output_vid_width, self.get_final_layer_height()))
+            # return np.array(frame_from_pil, dtype=np.uint8)
             return image_clip.get_frame(t)[:, x : x + self.output_vid_width]
 
         return VideoClip(make_frame, duration=self.duration)

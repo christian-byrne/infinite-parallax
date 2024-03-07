@@ -27,19 +27,21 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 
 [Process Outline and Explanation](docs/process_explanation.md)
 
+
 ## TODO
 
+- [ ] Expand mask with feathering and blue before extracting alpha layer
 - [ ] Salient objects
-  - [ ] Segmentation prompt tags use correct separator/format
-  - [ ] Multiple iterations of salient object removal
-  - [ ] Get salient object tags/prompts in config creation
+  - [x] Segmentation prompt tags use correct separator/format
+  - [x] Multiple iterations of salient object removal
+  - [x] Get salient object tags/prompts in config creation
   - [x] Segment
   - [x] Create masks
   - [x] Extract alpha layer
   - [x] Inpaint new base layer and set as new start image
   - [x] Calculate motion vectors for each object alpha layer
     - [ ] Determine object velocity from config (default: objects move according to their base layer, option: objects are static or barely move so as to highlight them)
-  - [ ] Overlay alpha layers onto final video
+  - [x] Overlay alpha layers onto final video
   - [ ] Documentation - add the overlay process to the video composite process explanation
 - [ ] Segmentation for initial layers
   - [ ] Edit methods to handle non-rectangular layers (CompositeVideoClip)
@@ -49,9 +51,9 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
   - [ ] Documentation
 - [ ] ControlNet edge softening
   - [ ] Documentation
-- [ ] Use project-specific I/O directories
+- [x] Use project-specific I/O directories
   - [x] As args when starting detached comfy process/server
-  - [ ] Use filename prefix constants for faster selection of output when server terminates
+  - [x] Use filename prefix constants for faster selection of output when server terminates
 - [ ] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
   - [ ] Negative and positive velocity testing
@@ -69,3 +71,9 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
   - [ ] Update README
   - [ ] Turn into ComfyUI node
   - [ ] Web view
+
+## Reminders
+
+- Use the non-API workflows for editing manually otherwise you have to re-set the node titles each time
+- LoadImage nodes use relative paths from `--input-directory`
+- Smoothness a function of perceivability of pixel distance

@@ -1,0 +1,75 @@
+
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] (Project Workflow) Created Copy in Project Dir of Workflow Template:
+          /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_object
+          /salient_object-remove_inpaint_extract-v2-API_VERSION.json
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] (Project Workflow) Updating LoadImage's image value:
+          from star_wars-medium.jpg to base_layer-salient_object_removed_00001_.png[DEVMODE] (Project Workflow) Updating Save Inpainted Base Layer's filename_prefix value:
+          from salient_object_removed to base_layer-salient_object_removed[DEVMODE] (Project Workflow) Save Alpha Layer's filename_prefix value is already set to:
+          salient_object_alpha_layer[DEVMODE] (Project Workflow) CLIP Text Encode (Negative Prompt)'s text Value Appended with:
+          man, person, silhouette, human, 1boy, 2boys[DEVMODE] (Project Workflow) Negative Prompt - Fill Object Region with BG Content Only's text Value Appended with:
+          man, person, silhouette, human, 1boy, 2boys[DEVMODE] (Project Workflow) Auto Prompt Exclude List's prompt Value Appended with:
+          man, person, silhouette, human, 1boy, 2boys[DEVMODE] (Project Workflow) Updating Generalized Salient Object Tags (Descriptors)'s prompt value:
+          from multiple_girls . multiple_boys . 1girl . man . woman . 1boy . salient obj
+          ects . men . person . human to man . person . silhouette . human . 1boy . 2boys
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Trying to find path to python version compatible with comfy server:
+          version 3.10.6
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] Using python path:
+          /home/c_byrne/.pyenv/versions/3.10.6/bin/python[DEVMODE] This is the command that will be used to start comfy:
+          ['/home/c_byrne/.pyenv/versions/3.10.6/bin/python', '/home/c_byrne/tools/sd/sd
+          -interfaces/ComfyUI/main.py', '--port', '8188', '--output-directory', '/home/c_
+          byrne/projects/infinite-parallax/projects/example-star_wars', '--input-director
+          y', '/home/c_byrne/projects/infinite-parallax/projects/example-star_wars', '--d
+          isable-auto-launch', '--disable-metadata'][DEVMODE] Comfy server status:
+          Not running. Starting new server in detached process[DEVMODE] Comfy:
+          Comfy server started
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] New Comfy Client Created with ID:
+          475b1997-9a21-4702-8c27-34d749da4ff1
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] Comfy server connection attempt 1/18:
+          failed[DEVMODE] Comfy server connection attempt 2/18:
+          failed[DEVMODE] Comfy server connection attempt 3/18:
+          failed[DEVMODE] Comfy server connection attempt 4/18:
+          failed[DEVMODE] Comfy server connection attempt 5/18:
+          failed[DEVMODE] Comfy server connection attempt 6/18:
+          failed[DEVMODE] Comfy server connection attempt 7/18:
+          failed[DEVMODE] Comfy server connection attempt 8/18:
+          failed[DEVMODE] Comfy server connection attempt 9/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 10/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 11/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 12/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 13/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 14/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 15/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 16/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 17/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 18/18:
+          sucecceeded - connection established
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Queueing Workflow at:
+          02 38AM
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Error with Comfy API Client process:
+          HTTP Error 400  Bad Request
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Error starting comfy server/client:
+          HTTP Error 400  Bad Request
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Comfy Process:
+          server stopped
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 02:38AM —————————————————
+[DEVMODE] Disconnect Client Attempt:
+          Client is already disconnected
+——————————————————————————————————————————————————————————————————————————————————————

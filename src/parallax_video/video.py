@@ -9,6 +9,7 @@ from interfaces.layer_interface import LayerInterface
 from interfaces.logger_interface import LoggerInterface
 from constants import (
     VIDEO_CODEC,
+    DEV,
 )
 
 
@@ -18,6 +19,7 @@ class ParallaxVideo:
         self.logger = logger
 
         self.object_layers = self.create_salient_object_layer()
+
         self.create_original_layer_slices()
 
         if not self.user_confirm():
@@ -27,8 +29,12 @@ class ParallaxVideo:
         for layer in self.base_layers:
             layer.create_cropped_steps()
             layer.stitch_cropped_steps()
+        for obj_layer in self.object_layers:
+            obj_layer.create_cropped_steps()
+            obj_layer.stitch_cropped_steps()
 
         self.layer_videoclips = self.create_layer_videoclips()
+        self.object_layer_videoclips = self.create_object_layer_videoclips()
         self.composite_layer_videoclips()
 
     def user_confirm(self):
@@ -107,6 +113,15 @@ class ParallaxVideo:
 
         return layer_clips
 
+    def create_object_layer_videoclips(self) -> list[VideoClip]:
+        layer_clips = []
+        for layer in self.object_layers:
+            layer_videoclip = layer.create_layer_videoclip()
+            layer_videoclip = layer_videoclip.set_position((0, 0))
+            layer_clips.append(layer_videoclip)
+
+        return layer_clips
+
     def composite_layer_videoclips(self):
         """
         Create a final video from the frames.
@@ -115,11 +130,15 @@ class ParallaxVideo:
         Each list of VideoClip instances represents a layer.
         The layers should be stacked according to the vector of motion.
 
+        The object layers are composited on top of the base layers, because
+        they have an alpha channel and should be visible on top of the base layers.
+
         This function creates a final video by compositing the layer clips and saving it to the specified output path.
         """
 
         video_composite = CompositeVideoClip(
-            self.layer_videoclips, size=self.get_video_size()
+            self.layer_videoclips + self.object_layer_videoclips,
+            size=self.get_video_size(),
         )
 
         output_path = os.path.join(
@@ -131,6 +150,24 @@ class ParallaxVideo:
             output_path,
             codec=VIDEO_CODEC,
             fps=self.project.config_file()["fps"],
+            preset="slow" if DEV else "medium",
+            ffmpeg_params=(
+                [
+                    "-crf",
+                    "18",
+                    "-b:v",
+                    "2M",
+                    "-pix_fmt",
+                    "yuv420p",
+                    "-profile:v",
+                    "high",
+                    "-vf",
+                    "scale=1920:1080",
+                ]
+                if DEV
+                else ["-crf", "18", "-b:v", "2M", "-pix_fmt", "yuv420p"]
+            ),
+            threads=12 if DEV else 4,
         )
 
-        print(f"\n\nFinal video saved to {output_path}\n")
+        self.logger.log(f"Final video saved to {output_path}")
