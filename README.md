@@ -55,6 +55,9 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 - [ ] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
   - [ ] Negative and positive velocity testing
+- [ ] Inpainting prompts (negative and positive) from config
+  - [ ] For salient object removal
+  - [ ] For layer shifts
 - [ ] Delete first image from each layer sequence or don't save in first place
 - [ ] Auomate video post-processing
   - [ ] Add sound from library

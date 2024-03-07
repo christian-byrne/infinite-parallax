@@ -1,24 +1,21 @@
 import os
 import json
 from constants import (
-    DEV,
     PROJECT_DATA_REL_PATH,
     CONFIG_FILENAME,
     ORIGINAL_LAYERS_DIR,
     OUTPUT_VIDEO_PATH,
     LAYER_OUTPUT_DIR,
     SALIENT_OBJECTS_DIR,
-    WORKFLOW_DIR,
+    PROJECT_WORKFLOW_DIR,
     CROPPED_STEPS_DIR,
     STITCHED_INPAINT_DIR,
+    STITCHED_OBJECTS_DIR,
 )
 from .create_config import create_config
 from utils.check_make_dir import check_make_dir
 from interfaces.project_interface import ProjectInterface
 from parallax_video.video import ParallaxVideo
-from layers.salient_object import SalientObjectLayer
-from comfy_api.client import ComfyClient
-from comfy_api.server import ComfyServer
 from log.logging import Logger
 from PIL import Image
 from termcolor import colored
@@ -57,24 +54,8 @@ class ParallaxProject(ProjectInterface):
             # because maybe the user wants to change the input image but keep everything else (config, etc.)
             self.copy_input_image_to_project_dir()
             self.input_image = Image.open(self.config_file()["input_image_path"])
-            self.create_original_layer_slices()
 
-        # server = ComfyServer(self, self.logger, self.project_dir_path, self.project_dir_path)
-        # server.start()
-
-        # try:
-        #     client = ComfyClient(self, "/home/c_byrne/projects/infinite-parallax/workflow-templates/testing/img2img-test-fast.json", self.logger)
-        #     client.connect()
-        #     client.queue_workflow()
-        # except Exception as e:
-        #     self.logger.log(f"Error starting comfy client: {e}")
-        # finally:
-        #     server.kill()
-        #     client.disconnect()
-
-
-        # x = SalientObjectLayer(self, 1)
-        # ParallaxVideo(self)
+        ParallaxVideo(self, self.logger)
 
     def init_project_structure(self):
         cprint = lambda head, text: print(colored(head, "yellow") + text + "\n", end="")
@@ -108,32 +89,7 @@ class ParallaxProject(ProjectInterface):
         # Create folders for standard project structure
         self.layer_outputs_dir()
         self.salient_objects_dir()
-        self.workflow_dir()  # TODO - copy copy of template workflow named to match project name
-
-    def create_original_layer_slices(self):
-        """
-        Creates and saves individual slices of the original layers from the input image.
-
-        This method iterates over the layers specified in the project configuration and crops
-        the input image to create individual slices for each layer. The slices are then saved
-        as separate image files in the original layers directory.
-
-        Returns:
-            None
-        """
-        x = 0
-        y = 0
-        # TODO: Full vector range logic
-        width = self.input_image.width
-        for index, layer in enumerate(self.config_file()["layers"]):
-            height = layer["height"]
-            input_layer_image = self.input_image.crop((x, y, x + width, y + height))
-            input_layer_image.save(
-                os.path.join(
-                    self.original_layers_dir(), f"{index+1}_original_layer.png"
-                )
-            )
-            y += height
+        self.workflow_dir()
 
     def set_config(self):
         config = create_config()
@@ -170,7 +126,7 @@ class ParallaxProject(ProjectInterface):
             return json.load(config_file)
 
     def workflow_dir(self):
-        path = os.path.join(self.project_dir_path, WORKFLOW_DIR)
+        path = os.path.join(self.project_dir_path, PROJECT_WORKFLOW_DIR)
         check_make_dir(path)
         # Add workflow logic
         return path
@@ -209,6 +165,12 @@ class ParallaxProject(ProjectInterface):
         path = os.path.join(self.project_dir_path, OUTPUT_VIDEO_PATH)
         check_make_dir(path)
         # Add output video logic
+        return path
+
+    def stitched_objects_dir(self):
+        path = os.path.join(self.project_dir_path, STITCHED_OBJECTS_DIR)
+        check_make_dir(path)
+        # Add stitched objects logic
         return path
 
     def print_info(self):

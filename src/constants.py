@@ -14,13 +14,14 @@ LAYER_VIDEOS_DIR = "videos/layer_videos"
 VIDEO_CODEC = "libx264"
 OUTPUT_VIDEO_PATH = "output"
 SALIENT_OBJECTS_DIR = "objects/alpha_layers/salient_objects"
-WORKFLOW_DIR = "project-workflows"
-LOGS_DIR = "logs" # rel path from repo root
+PROJECT_WORKFLOW_DIR = "project_workflows"
+GLOABL_LOGS_DIR = "logs" # rel path from repo root
 COMFY_PORT = 8188
 COMFY_API_MAX_CONNECT_ATTEMPTS = 18
-SALIENT_OBJECTS_WORKFLOW_PATH = "workflows/api/salient_object/salient_object-remove_inpaint_extract-v1-API_VERSION.json"
-SALIENT_OBJECT_ALPHA_LAYER_PREFIX = "salient_object-alpha_layer"
+SALIENT_OBJECTS_WORKFLOW_PATH = "workflow-templates/api/salient_object/salient_object-remove_inpaint_extract-v2-API_VERSION.json"
+SALIENT_OBJECT_ALPHA_LAYER_PREFIX = "salient_object_alpha_layer"
 BASE_LAYER_WITHOUT_OBJECTS_PREFIX = "base_layer-salient_object_removed"
+STITCHED_OBJECTS_DIR = "stitches/stitched_object_alphas"
 DEFAULT_DISTANCES = {
     "cloud_layer": {
         "mathematically_accurate_distance": 16.18,

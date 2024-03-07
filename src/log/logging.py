@@ -1,4 +1,4 @@
-from constants import DEV, LOGS_DIR
+from constants import DEV, GLOABL_LOGS_DIR
 from termcolor import colored
 import os
 import time
@@ -54,7 +54,7 @@ class Logger(LoggerInterface):
     def set_log_file_fullpath(self):
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         repo_root = os.path.dirname(repo_root)
-        self.logs_dir = os.path.join(repo_root, LOGS_DIR)
+        self.logs_dir = os.path.join(repo_root, GLOABL_LOGS_DIR)
         check_make_dir(self.logs_dir)
         log_filename = f"logs-{self.project_name}-{self.author}-{time.strftime('%m_%d_%Y-%I_%M')}.log"
         self.log_file_fullpath = os.path.join(self.logs_dir, log_filename)
@@ -64,7 +64,10 @@ class Logger(LoggerInterface):
         cur_time = f" {time.strftime('%I:%M%p')} "
         one_fourth = (self.terminal_length - len(cur_time)) // 4
         three_fourths = 3 * one_fourth
-        rule = f"\n{'—' * three_fourths}{cur_time}{'—' * one_fourth}\n"
+        rule = f"\n{'—' * three_fourths}{cur_time}{'—' * one_fourth}"
+        # truncate if necessary to match length of horizontal_rule
+        rule = rule[: len(self.horizontal_rule) - 1] + "\n"
+
         return colored(rule, self.RULE_COLOR) if color_text else rule
 
     def format_log_message(self, *args, color_text: bool, pad_with_rules) -> str:
@@ -75,7 +78,7 @@ class Logger(LoggerInterface):
         if len(message_parts) == 1:
             message_parts = [in_string.strip().split(" ")[0], in_string]
 
-        title = message_parts[0]
+        title = message_parts[0] + ":"
         text = " ".join(message_parts[1:])
 
         # Split the text into lines which are less than (teminal width - length of the prefix)
@@ -84,15 +87,21 @@ class Logger(LoggerInterface):
         for char in text:
             if char_index % self.max_text_line_length == 0:
                 text_formatted += "\n" + self.prefix_whitespace
-            text_formatted += char
+                text_formatted += "" if char == " " else char
+            else:
+                text_formatted += char
             char_index += 1
 
-        top_horizontal_rule = self.get_top_horizontal_rule(color_text) if pad_with_rules else ""
+        top_horizontal_rule = (
+            self.get_top_horizontal_rule(color_text) if pad_with_rules else ""
+        )
         prefix = self.prefix_colored if color_text else self.prefix_string
 
         colored_title = colored(title, "light_cyan") if color_text else title
         if pad_with_rules:
-            bot_horizontal_rule = self.horizontal_rule_colored if color_text else self.horizontal_rule
+            bot_horizontal_rule = (
+                self.horizontal_rule_colored if color_text else self.horizontal_rule
+            )
         else:
             bot_horizontal_rule = ""
 

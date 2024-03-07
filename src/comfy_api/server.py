@@ -32,14 +32,15 @@ class ComfyServer:
 
         self.__set_python_path()
         self.main_thread_logger.log(
-            f"This is the command that will be used to start comfy: {self.__get_comfy_cli_args()}"
+            f"This is the command that will be used to start comfy: {self.__get_comfy_cli_args()}",
+            pad_with_rules=False,
         )
 
     def start(self):
         """Wrapper for server so that it can be wrapped in try/except block that terminates the server on error"""
         try:
             self.__launch_process()
-            self.main_thread_logger.log("Comfy server started")
+            self.main_thread_logger.log("Comfy server started", pad_with_rules=False)
         except Exception as e:
             self.main_thread_logger.log(f"Error starting comfy server: {e}")
             self.kill()
@@ -48,9 +49,9 @@ class ComfyServer:
         if self.server_process:
             self.server_process.terminate()
             self.server_process.wait()
-            self.main_thread_logger.log("Comfy server stopped")
+            self.main_thread_logger.log("Comfy Process: server stopped")
         else:
-            self.main_thread_logger.log("No Comfy server to stop")
+            self.main_thread_logger.log("Comfy Process Disconnect Attempt: No Comfy server to stop")
 
     def __get_comfy_cli_args(self):
         """https://github.com/comfyanonymous/ComfyUI/blob/master/comfy/cli_args.py"""
@@ -94,8 +95,9 @@ class ComfyServer:
                 "python",
             )
             if not os.path.exists(self.python_path):
-                self.logger.log(
-                    f"Python {self.comfy_compatible_python_ver}: not found, installing it with pyenv"
+                self.main_thread_logger.log(
+                    f"Python {self.comfy_compatible_python_ver}: not found, installing it with pyenv",
+                    pad_with_rules=False,
                 )
                 subprocess.run(["pyenv", "install", self.comfy_compatible_python_ver])
                 self.python_path = os.path.join(
@@ -108,7 +110,9 @@ class ComfyServer:
         if not self.python_path or not os.path.exists(self.python_path):
             raise RuntimeError("Python path not found")
 
-        self.main_thread_logger.log(f"Using python path: {self.python_path}")
+        self.main_thread_logger.log(
+            f"Using python path: {self.python_path}", pad_with_rules=False
+        )
 
     def __launch_process(self):
         # TODO: not sure if changing directories and then switching back is necessary
@@ -119,12 +123,14 @@ class ComfyServer:
             with request.urlopen(self.server_url) as f:
                 if f.status == 200:
                     self.main_thread_logger.log(
-                        "Comfy server status: Already running, connecting to existing server"
+                        "Comfy server status: Already running, connecting to existing server",
+                        pad_with_rules=False,
                     )
                     return
         except (error.URLError, error.HTTPError, KeyError):
             self.main_thread_logger.log(
-                "Comfy server status: Not running. Starting new server in detached process"
+                "Comfy server status: Not running. Starting new server in detached process",
+                pad_with_rules=False,
             )
 
         os.chdir(COMFY_PATH)

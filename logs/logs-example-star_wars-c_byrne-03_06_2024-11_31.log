@@ -1,0 +1,14 @@
+
+————————————————————————————————————————————————————————— 11:31PM ————————————————[DEVMODE] (Project Workflow) Created Copy in Project Dir of Workflow Template
+           /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_ob
+          ject/salient_object-remove_inpaint_extract-v1-API_VERSION.json
+——————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] (Project Workflow) Updating LoadImage's image value
+           from Cole_Thomas_The_Course_of_Empire_Destruction_1836 (2).jpg to /home/c_
+          byrne/projects/infinite-parallax/src/data/projects/example-star_wars/star_w
+          ars-medium.jpg[DEVMODE] (Project Workflow) Updating Generalized Salient Object Tags (Descriptors)'s prompt value
+           from salient objects, statue, skyscraper, pillar, flag, column to man . pe
+          rson . silhouette
+————————————————————————————————————————————————————————— 11:31PM ————————————————[DEVMODE] Error starting comfy server/client
+           ComfyServer.__init__() got an unexpected keyword argument 'input'
+——————————————————————————————————————————————————————————————————————————————————

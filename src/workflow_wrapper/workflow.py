@@ -14,34 +14,88 @@ class ComfyAPIWorkflow:
         self.project = project
         self.logger = logger
         self.workflow_template_path = workflow_template_path
-        self.set_workflow()
+
+        self.filename = (
+            os.path.basename(self.workflow_template_path).replace(".json", "")
+            + f"-{self.project.name}.json"
+        )
+        self.path = os.path.join(self.project.workflow_dir(), self.filename)
+
+        self.__set_workflow()
+        self.__set_node_mappings()
+        self.save()
+        self.logger.log(
+            "(Project Workflow) Created Copy in Project Dir of Workflow Template:",
+            self.workflow_template_path,
+        )
 
     def save(self):
-        filename = f"{os.path.basename(self.workflow_template_path).replace('.json', '')}-{self.project.name}.json"
-        save_path = os.path.join(self.project.workflow_dir(), filename)
-        with open(save_path, "w") as workflow_file:
+        with open(self.path, "w") as workflow_file:
             json.dump(self.workflow_dict, workflow_file, indent=4)
 
-    def update(self, node_name, key, value):
-        for node in self.workflow_dict:
-            if (
-                self.workflow_dict[node]["_meta"]["title"] == node_name
-                or self.workflow_dict[node]["class_type"] == node_name
-            ):
-                self.workflow_dict[node][key] = value
-                break
+    def update(
+        self, node_name: str, key: str, value: any, save_after=False, append=False
+    ) -> None:
+        """Update one of the inputs of a node in the workflow dict
+
+        Args:
+            node_name (str): The name of the node to update (either its title or class_type)
+            key (str): The name of the input field to update
+            value (any): The new value to put in the input field
+            save_after (bool, optional): Whether to save the workflow to the disk after updating.
+                Defaults to False.
+            append (bool, optional): Whether to append the new value to the existing value.
+        """
+        if node_name in self.__node_titles:
+            index = self.__node_titles[node_name]
+        elif node_name in self.__node_class_types:
+            index = self.__node_class_types[node_name]
+        else:
+            raise ValueError(
+                "Project Workflow Error:",
+                f"The node {node_name} does not exist in the provided template workflow",
+            )
+
+        if "image" in key.lower():
+            print(
+                "\nKeep in mind that the image inputs are just filenames, not full paths.\nThe path is assumed to be the comfy input image directory\n(which should be manually set to whatever folder you need before passing this workflow to a comfy client)\n"
+            )
+        if key not in self.workflow_dict[index]["inputs"].keys():
+            raise KeyError(
+                "Project Workflow Error:",
+                f"The key {key} does not exist in the workflow node {node_name}",
+            )
+
+        if self.workflow_dict[index]["inputs"][key] == value:
+            self.logger.log(
+                f"(Project Workflow) {node_name}'s {key} value is already set to: {value}",
+                pad_with_rules=False,
+            )
+            return
+
+        if append:
+            self.logger.log(
+                f"(Project Workflow) {node_name}'s {key} Value Appended with:",
+                value,
+                pad_with_rules=False,
+            )
+            # Try to add a space between the old and new value
+            try:
+                self.workflow_dict[index]["inputs"][key] += " " + value
+            except TypeError:
+                self.workflow_dict[index]["inputs"][key] += value
+        else:
+            self.logger.log(
+                f"(Project Workflow) Updating {node_name}'s {key} value:",
+                f"from {self.workflow_dict[index]['inputs'][key]} to {value}",
+                pad_with_rules=False,
+            )
+            self.workflow_dict[index]["inputs"][key] = value
+        if save_after:
+            self.save()
 
     def get_workflow_dict(self):
         return self.workflow_dict
-
-    def set_workflow(self):
-        try:
-            with open(self.workflow_template_path, "r") as workflow_file:
-                self.workflow_dict = json.load(workflow_file)
-        except FileNotFoundError:
-            raise FileNotFoundError(
-                f"The passed workflow template json file could not be found at the given path: {self.workflow_template_path}"
-            )
 
     def parse_node_name(self, data):
         """Accepts the data dict from a response from the comfy server and returns the name of the node that the data is about. Allows errors, in which case returns "Unknown" """
@@ -61,10 +115,45 @@ class ComfyAPIWorkflow:
         {'type': 'progress', 'data': {'value': 34, 'max': 35, 'prompt_id': '4c4d1544-da2e-4321-806c-49070a8b865a', 'node': '17'}}
         """
         cur_node_name = self.parse_node_name(data)
+        # incomplete_char = "⬜️"
+        incomplete_char = "☐"
         try:
+            # if value is even
+            if int(data["value"]) % 4 == 0:
+                # complete_char = "✨"
+                complete_char = "◴"
+            elif int(data["value"]) % 3 == 0:
+                # complete_char = "🌟"
+                complete_char = "◷"
+            elif int(data["value"]) % 2 == 0:
+                # complete_char = "⭐"
+                complete_char = "◶️"
+            else:
+                # complete_char = "💫"
+                complete_char = "◵"
             print(
-                f"{cur_node_name}: {'#' * data['value']}{'-' * (data['max'] - data['value'])} {data['value']}/{data['max']}",
+                f"{cur_node_name}: {complete_char * data['value']}{incomplete_char * (data['max'] - data['value'])} {data['value']}/{data['max']}⏳",
                 end="\r",
             )
         except KeyError:
             pass
+
+    def __set_workflow(self):
+        try:
+            with open(self.workflow_template_path, "r") as workflow_file:
+                self.workflow_dict = json.load(workflow_file)
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"The passed workflow template json file could not be found at the given path: {self.workflow_template_path}"
+            )
+
+    def __set_node_mappings(self):
+        """If speed is more important than memory"""
+        self.__node_titles = {}
+        self.__node_class_types = {}
+
+        for node_index, node in self.workflow_dict.items():
+            if "_meta" in node.keys() and "title" in node["_meta"].keys():
+                self.__node_titles[node["_meta"]["title"]] = node_index
+            if "class_type" in node.keys():
+                self.__node_class_types[node["class_type"]] = node_index

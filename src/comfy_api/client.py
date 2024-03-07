@@ -17,15 +17,16 @@ class ComfyClient:
     def __init__(
         self,
         project: ProjectInterface,
-        workflow_json_path: str,
+        workflow: ComfyAPIWorkflow,
         logger: LoggerInterface,
     ):
         self.project = project
-        self.workflow = ComfyAPIWorkflow(project, logger, workflow_json_path)
+        self.workflow = workflow
         self.logger = logger
         self.server_url = f"http://localhost:{COMFY_PORT}"
         self.client_id = str(uuid.uuid4())
         self.__websocket = None
+        self.logger.log(f"New Comfy Client Created with ID: {self.client_id}")
 
     def is_connected(self):
         """
@@ -62,6 +63,11 @@ class ComfyClient:
                 )
                 time.sleep(1)
                 continue
+            self.logger.log(
+                f"Comfy server connection attempt {attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}:",
+                "sucecceeded - connection established",
+                pad_with_rules=False,
+            )
 
         if not self.__websocket.connected:
             raise ConnectionError("Failed to connect to Comfy server")
@@ -96,16 +102,16 @@ class ComfyClient:
 
         try:
             start_time_epoch = time.time()
-            self.logger.log(f"Queueing workflow at: {time.strftime('%I_%M')}")
+            self.logger.log(f"Queueing Workflow at: {time.strftime('%I:%M%p')}")
 
             self.__send_request()
             self.__listen_until_complete()
 
             time_diff_formatted = time.strftime(
-                "%M minutes and %S seconds", time.gmtime(time.time() - start_time_epoch)
+                "%Mmin, %Ssec", time.gmtime(time.time() - start_time_epoch)
             )
             self.logger.log(
-                f"Comfy server finished processing request at: {time.strftime('%I:%M%p')} (Time elapsed: {time_diff_formatted})"
+                f"Comfy server finished processing request at: {time.strftime('%I:%M%p')} (Time elapsed - {time_diff_formatted})"
             )
 
         except Exception as e:

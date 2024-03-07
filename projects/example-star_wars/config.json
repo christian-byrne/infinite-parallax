@@ -40,5 +40,16 @@
     "project_dir_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars",
     "config_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars/config.json",
     "project_name": "example-star_wars",
-    "input_image_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars/star_wars-medium.jpg"
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00001_.png",
+    "salient_objects": [
+        [
+            "man",
+            "person",
+            "silhouette",
+            "human",
+            "1boy",
+            "2boys"
+        ]
+    ],
+    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars/star_wars-medium.jpg"
 }

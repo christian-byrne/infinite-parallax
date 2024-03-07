@@ -6,6 +6,7 @@ class ProjectInterface(Protocol):
     name: str  # The name of the project.
     version: str  # The version of the project.
     author: str  # The author of the project.
+    project_dir_path: str  # The path to the project directory.
     repo_root: str  # The root directory of the project repository.
 
     def update_config(self, key: str, value: any) -> None:
@@ -123,5 +124,18 @@ class ProjectInterface(Protocol):
 
         Returns:
             str: The path to the output video directory.
+        """
+        ...
+    
+    def stitched_objects_dir(self) -> str:
+        """
+        Returns the path to the directory where stitched objects are stored.
+
+        This method constructs the path by joining the project directory path with the
+        STITCHED_OBJECTS_DIR constant. It also checks if the directory exists and creates
+        it if it doesn't.
+
+        Returns:
+            str: The path to the stitched objects directory.
         """
         ...

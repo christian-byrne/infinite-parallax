@@ -1,0 +1,329 @@
+{
+    "1": {
+        "inputs": {
+            "model_name": "sam_hq_vit_b (379MB)"
+        },
+        "class_type": "SAMModelLoader (segment anything)",
+        "_meta": {
+            "title": "SAMModelLoader (segment anything)"
+        }
+    },
+    "2": {
+        "inputs": {
+            "model_name": "GroundingDINO_SwinT_OGC (694MB)"
+        },
+        "class_type": "GroundingDinoModelLoader (segment anything)",
+        "_meta": {
+            "title": "GroundingDinoModelLoader (segment anything)"
+        }
+    },
+    "3": {
+        "inputs": {
+            "prompt": [
+                "9",
+                0
+            ],
+            "threshold": 0.37,
+            "sam_model": [
+                "1",
+                0
+            ],
+            "grounding_dino_model": [
+                "2",
+                0
+            ],
+            "image": [
+                "8",
+                0
+            ]
+        },
+        "class_type": "GroundingDinoSAMSegment (segment anything)",
+        "_meta": {
+            "title": "GroundingDinoSAMSegment (segment anything)"
+        }
+    },
+    "4": {
+        "inputs": {
+            "mask": [
+                "3",
+                1
+            ]
+        },
+        "class_type": "MaskToImage",
+        "_meta": {
+            "title": "Mask To Image (mtb)"
+        }
+    },
+    "5": {
+        "inputs": {
+            "images": [
+                "4",
+                0
+            ]
+        },
+        "class_type": "PreviewImage",
+        "_meta": {
+            "title": "Preview Segmentation Mask"
+        }
+    },
+    "8": {
+        "inputs": {
+            "image": "star_wars-medium.jpg",
+            "upload": "image"
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Input"
+        }
+    },
+    "9": {
+        "inputs": {
+            "prompt": "man . person . silhouette . human . 1boy . 2boys"
+        },
+        "class_type": "CR Prompt Text",
+        "_meta": {
+            "title": "Generalized Salient Object Tags (Descriptors)"
+        }
+    },
+    "11": {
+        "inputs": {
+            "positive": [
+                "12",
+                0
+            ],
+            "negative": [
+                "13",
+                0
+            ],
+            "vae": [
+                "16",
+                2
+            ],
+            "pixels": [
+                "8",
+                0
+            ],
+            "mask": [
+                "19",
+                0
+            ]
+        },
+        "class_type": "InpaintModelConditioning",
+        "_meta": {
+            "title": "InpaintModelConditioning"
+        }
+    },
+    "12": {
+        "inputs": {
+            "text": [
+                "15",
+                0
+            ],
+            "clip": [
+                "16",
+                1
+            ]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Positive Prompt)"
+        }
+    },
+    "13": {
+        "inputs": {
+            "text": "embedding:embeddings/JuggernautNegative-neg, embedding:embeddings/NegativeDynamics-neg man, person, silhouette, human, 1boy, 2boys",
+            "clip": [
+                "16",
+                1
+            ]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Negative Prompt)"
+        }
+    },
+    "14": {
+        "inputs": {
+            "model": "wd-v1-4-moat-tagger-v2",
+            "threshold": 0.35,
+            "character_threshold": 0.96,
+            "replace_underscore": false,
+            "trailing_comma": false,
+            "exclude_tags": [
+                "20",
+                0
+            ],
+            "image": [
+                "8",
+                0
+            ]
+        },
+        "class_type": "WD14Tagger|pysssss",
+        "_meta": {
+            "title": "WD14 Tagger \ud83d\udc0d"
+        }
+    },
+    "15": {
+        "inputs": {
+            "text": [
+                "14",
+                0
+            ]
+        },
+        "class_type": "ShowText|pysssss",
+        "_meta": {
+            "title": "Auto-Generated Positive Prompt"
+        }
+    },
+    "16": {
+        "inputs": {
+            "ckpt_name": "Stable-diffusion/inpainting/wondermix_V2-inpainting.safetensors"
+        },
+        "class_type": "CheckpointLoaderSimple",
+        "_meta": {
+            "title": "Load Checkpoint"
+        }
+    },
+    "17": {
+        "inputs": {
+            "seed": 717456717441951,
+            "steps": 30,
+            "cfg": 2.8000000000000003,
+            "sampler_name": "dpmpp_2m_sde_gpu",
+            "scheduler": "karras",
+            "denoise": 1,
+            "preview_method": "none",
+            "vae_decode": "true",
+            "model": [
+                "16",
+                0
+            ],
+            "positive": [
+                "11",
+                0
+            ],
+            "negative": [
+                "11",
+                1
+            ],
+            "latent_image": [
+                "11",
+                2
+            ],
+            "optional_vae": [
+                "16",
+                2
+            ]
+        },
+        "class_type": "KSampler (Efficient)",
+        "_meta": {
+            "title": "KSampler (Efficient)"
+        }
+    },
+    "18": {
+        "inputs": {
+            "images": [
+                "17",
+                5
+            ]
+        },
+        "class_type": "PreviewImage",
+        "_meta": {
+            "title": "Output - Salient Object Removed & Inpainted"
+        }
+    },
+    "19": {
+        "inputs": {
+            "expand": 4,
+            "incremental_expandrate": 0,
+            "tapered_corners": false,
+            "flip_input": false,
+            "blur_radius": 0.30000000000000004,
+            "lerp_alpha": 1,
+            "decay_factor": 1,
+            "mask": [
+                "3",
+                1
+            ]
+        },
+        "class_type": "GrowMaskWithBlur",
+        "_meta": {
+            "title": "GrowMaskWithBlur"
+        }
+    },
+    "20": {
+        "inputs": {
+            "prompt": "multiple_girls, multiple_boys, boat, 6+boys"
+        },
+        "class_type": "CR Prompt Text",
+        "_meta": {
+            "title": "Auto Prompt Exclude List"
+        }
+    },
+    "22": {
+        "inputs": {
+            "filename_prefix": "base_layer-salient_object_removed",
+            "images": [
+                "17",
+                5
+            ]
+        },
+        "class_type": "SaveImage",
+        "_meta": {
+            "title": "Save Inpainted Base Layer"
+        }
+    },
+    "24": {
+        "inputs": {
+            "images": [
+                "25",
+                0
+            ]
+        },
+        "class_type": "PreviewImage",
+        "_meta": {
+            "title": "Output - Salient Object Alpha Layer"
+        }
+    },
+    "25": {
+        "inputs": {
+            "image": [
+                "8",
+                0
+            ],
+            "alpha": [
+                "27",
+                0
+            ]
+        },
+        "class_type": "JoinImageWithAlpha",
+        "_meta": {
+            "title": "Join Image with Alpha"
+        }
+    },
+    "27": {
+        "inputs": {
+            "mask": [
+                "3",
+                1
+            ]
+        },
+        "class_type": "InvertMask",
+        "_meta": {
+            "title": "InvertMask"
+        }
+    },
+    "28": {
+        "inputs": {
+            "filename_prefix": "salient_object_alpha_layer",
+            "images": [
+                "25",
+                0
+            ]
+        },
+        "class_type": "SaveImage",
+        "_meta": {
+            "title": "Save Alpha Layer"
+        }
+    }
+}

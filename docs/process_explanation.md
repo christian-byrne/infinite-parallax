@@ -40,7 +40,6 @@ Input: *Course of Empire - Destruction* by Thomas Cole
 
 #### Salient Object Removal and Inpainting
 
-
 ![docs-course_of_empire-salient_object_removed_inpainted](pictures/docs-course_of_empire-salient_object_removed_inpainted.png)
 
 - This version of the image with the salient object removed and inpainted is used as the start image for the parallax process

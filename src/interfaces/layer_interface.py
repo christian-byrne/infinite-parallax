@@ -78,18 +78,6 @@ class LayerInterface(Protocol):
         """
         ...
 
-    def set_step_images(self) -> None:
-        """
-        Sets the step images for the layer.
-
-        This method retrieves all step images from the layer's project directory
-        and populates the `step_images` list with relevant information about each image.
-
-        Returns:
-            None
-        """
-        ...
-
     def create_cropped_steps(self) -> None:
         """
         Creates and saves individual cropped steps for the layer.
@@ -132,7 +120,7 @@ class LayerInterface(Protocol):
         """
         ...
 
-    def set_original_layer(self) -> None:
+    def __set_original_layer(self) -> None:
         """
         Sets the original layer for the current layer.
 

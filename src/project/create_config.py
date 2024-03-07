@@ -146,15 +146,49 @@ def create_config():
         ]
     )
     config["fps"] = int(input("(int) FPS of the Output Video: "))
+    
+    print_list(
+        [
+            "Salient Objects",
+            "Salient objects are objects that will span across multiple layers.",
+            "Specifically, objects that are prominent and that, if disjointed or distorted,",
+            "will significantly disrupt the logical flow of the picture",
+            "This is the default list of objects that are prominent and usually cut across layers:",
+            "salient objects, statue, skyline, skyscraper, pillar, flag, column, building, tree, mountain, planet, asteroid, comet, meteor, rainbow, waterfall, volcano, bridge, tunnel, railway, airport, harbor, clouds, tornado, hurricane, lightning, rays",
+            "The salient objects will be automatically detected and separated from the base layer",
+            " and will have their own motion according to the lowest layer they are in",
+        ]
+    )
+    num_salient_objects = int(input("Enter the number of salient objects in your input image:\n> "))
 
+    print_list(
+        [
+            "Salient Object Tags",
+            "Provide a list of comma-separated tags for each of the salient objects in your image",
+            "E.g., if there is a skyscraper which spans the entire vertical length of the picture",
+            " and you have defined horizontal layers, then the skyscraper will be a salient object.",
+            " And you might provide the tags 'skyscraper,building,highrise,",
+            "Most commonly, you would have a person as a salient object, in which case ",
+            "the tags you would enter would be something like",
+            'man, person, silhouette, human, 1boy, 2boys'
+        ]
+    )
+    config["salient_objects"] = []
+    for i in range(num_salient_objects):
+        salient_object_tags = input(f"Salient Object Tags for Object {i+1}: ").split(",")
+        salient_object_tags = [
+            tag.strip("\n").strip("'").strip('"').strip()
+            for tag in salient_object_tags
+        ]
+        config["salient_objects"].append(salient_object_tags)
 
     for i in range(num_layers):
         layers[i]["velocity"] = (
             config["velocity_vector"][0]
-            * (1/layers[i]["distance_ratio"])
+            * (1 / layers[i]["distance_ratio"])
             * config["smoothness"],
             config["velocity_vector"][1]
-            * (1/layers[i]["distance_ratio"])
+            * (1 / layers[i]["distance_ratio"])
             * config["smoothness"],
         )
         # Round to 1 decimal place

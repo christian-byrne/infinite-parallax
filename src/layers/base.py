@@ -24,7 +24,7 @@ class BaseLayer(LayerInterface):
         self.slide_distance = 0
         # NOTE: total steps start at -1 for now because the first image is skipped (saving the first layer slices before any inpainting in the current workflow)
         self.total_steps = -1
-        self.set_original_layer()
+        self.__set_original_layer()
         self.set_step_images()
 
         self.duration = int(
@@ -59,7 +59,7 @@ class BaseLayer(LayerInterface):
 
         return width
 
-    def set_original_layer(self):
+    def __set_original_layer(self):
         if DEV:
             print(colored(f"Setting original layer for {self.name_prefix}", "yellow"))
             print(f"Original layers dir: {self.project.original_layers_dir()}")

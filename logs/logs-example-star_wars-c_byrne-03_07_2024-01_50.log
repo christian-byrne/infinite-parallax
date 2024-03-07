@@ -1,0 +1,96 @@
+
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] (Project Workflow) Created Copy in Project Dir of Workflow Template:
+          /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_object
+          /salient_object-remove_inpaint_extract-v1-API_VERSION.json
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] (Project Workflow) Updating LoadImage's image value:
+          from Cole_Thomas_The_Course_of_Empire_Destruction_1836 (2).jpg to star_wars-me
+          dium.jpg[DEVMODE] (Project Workflow) Updating Save Inpainted Base Layer's filename_prefix value:
+          from salient_object_removed to base_layer-salient_object_removed[DEVMODE] (Project Workflow) Save Alpha Layer's filename_prefix value is already set to:
+          salient_object_alpha_layer[DEVMODE] (Project Workflow) CLIP Text Encode (Negative Prompt)'s text Value Appended with:
+          man, person, silhouette, human, 1boy, 2boys[DEVMODE] (Project Workflow) Updating Generalized Salient Object Tags (Descriptors)'s prompt value:
+          from salient objects, statue, skyscraper, pillar, flag, column to man . person
+          . silhouette . human . 1boy . 2boys
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] Trying to find path to python version compatible with comfy server:
+          version 3.10.6
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] Using python path:
+          /home/c_byrne/.pyenv/versions/3.10.6/bin/python[DEVMODE] This is the command that will be used to start comfy:
+          ['/home/c_byrne/.pyenv/versions/3.10.6/bin/python', '/home/c_byrne/tools/sd/sd
+          -interfaces/ComfyUI/main.py', '--port', '8188', '--output-directory', '/home/c_
+          byrne/projects/infinite-parallax/projects/example-star_wars', '--input-director
+          y', '/home/c_byrne/projects/infinite-parallax/projects/example-star_wars', '--d
+          isable-auto-launch', '--disable-metadata'][DEVMODE] Comfy server status:
+          Not running. Starting new server in detached process[DEVMODE] Comfy:
+          Comfy server started
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] New Comfy Client Created with ID:
+          2451802b-74c7-4cc9-9e99-f76809221c15
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] Comfy server connection attempt 1/18:
+          failed[DEVMODE] Comfy server connection attempt 2/18:
+          failed[DEVMODE] Comfy server connection attempt 3/18:
+          failed[DEVMODE] Comfy server connection attempt 4/18:
+          failed[DEVMODE] Comfy server connection attempt 5/18:
+          failed[DEVMODE] Comfy server connection attempt 6/18:
+          failed[DEVMODE] Comfy server connection attempt 7/18:
+          failed[DEVMODE] Comfy server connection attempt 8/18:
+          failed[DEVMODE] Comfy server connection attempt 9/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 10/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 11/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 12/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 13/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 14/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 15/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 16/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 17/18:
+          sucecceeded - connection established[DEVMODE] Comfy server connection attempt 18/18:
+          sucecceeded - connection established
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] Queueing Workflow at:
+          01 50AM
+——————————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] {'exec_info':
+          {'queue_remaining'  0}}[DEVMODE] {'exec_info':
+          {'queue_remaining'  1}}[DEVMODE] {'exec_info':
+          {'queue_remaining'  1}}[DEVMODE] Executing Node:
+          Auto Prompt Exclude List[DEVMODE] Executing Node:
+          Input[DEVMODE] Executing Node:
+          WD14 Tagger 🐍[DEVMODE] Executing Node:
+          Auto-Generated Positive Prompt[DEVMODE] Executing Node:
+          Generalized Salient Object Tags (Descriptors)[DEVMODE] Executing Node:
+          SAMModelLoader (segment anything)[DEVMODE] Executing Node:
+          GroundingDinoModelLoader (segment anything)[DEVMODE] Executing Node:
+          GroundingDinoSAMSegment (segment anything)[DEVMODE] Executing Node:
+          Mask To Image (mtb)[DEVMODE] Executing Node:
+          Preview Segmentation Mask[DEVMODE] Executing Node:
+          InvertMask[DEVMODE] Executing Node:
+          Join Image with Alpha[DEVMODE] Executing Node:
+          Output - Salient Object Alpha Layer[DEVMODE] Executing Node:
+          Save Alpha Layer[DEVMODE] Executing Node:
+          Load Checkpoint[DEVMODE] Executing Node:
+          CLIP Text Encode (Positive Prompt)[DEVMODE] Executing Node:
+          CLIP Text Encode (Negative Prompt)[DEVMODE] Executing Node:
+          GrowMaskWithBlur[DEVMODE] Executing Node:
+          InpaintModelConditioning[DEVMODE] Executing Node:
+          KSampler (Efficient)[DEVMODE] Executing Node:
+          Output - Salient Object Removed & Inpainted[DEVMODE] Executing Node:
+          Save Inpainted Base Layer[DEVMODE] {'exec_info':
+          {'queue_remaining'  0}}[DEVMODE] Executing Node:
+          Unknown
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] Comfy server finished processing request at:
+          01 50AM (Time elapsed - 00min, 09sec)
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] Comfy Process:
+          server stopped
+——————————————————————————————————————————————————————————————————————————————————————
+
+———————————————————————————————————————————————————————————— 01:50AM —————————————————
+[DEVMODE] Disconnect Client Attempt:
+          Client is already disconnected
+——————————————————————————————————————————————————————————————————————————————————————

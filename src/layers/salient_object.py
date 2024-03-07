@@ -1,161 +1,190 @@
+from moviepy.editor import VideoClip, ImageClip
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
 from interfaces.logger_interface import LoggerInterface
 import os
-import json
-import shutil
 from PIL import Image
 from comfy_api.client import ComfyClient
-from utils.check_make_dir import check_make_dir
+from comfy_api.server import ComfyServer
+from workflow_wrapper.workflow import ComfyAPIWorkflow
 from utils.update_path_parts import update_path_parts
-from log.logging import Logger
 from termcolor import colored
 
 from constants import (
     SALIENT_OBJECTS_WORKFLOW_PATH,
     FEATHERING_MARGIN,
-    COMFY_PATH,
     SALIENT_OBJECT_ALPHA_LAYER_PREFIX,
     BASE_LAYER_WITHOUT_OBJECTS_PREFIX,
+    DEV,
 )
 
 
 class SalientObjectLayer(LayerInterface):
-    def __init__(self, project: ProjectInterface, logger: LoggerInterface, object_index: int):
+    def __init__(
+        self,
+        project: ProjectInterface,
+        logger: LoggerInterface,
+        prompt_tags: list[str],
+        object_index: int,
+    ):
         self.project = project
-        self.index = object_index
         self.logger = logger
+        self.index = object_index
+        self.name_prefix = f"salient_object_{self.index + 1}"
+        self.prompt_tags = " . ".join(prompt_tags).strip()
 
-        self.template_workflow_path = os.path.join(
-            self.project.repo_root, SALIENT_OBJECTS_WORKFLOW_PATH
+        self.workflow = ComfyAPIWorkflow(
+            self.project,
+            self.logger,
+            os.path.join(self.project.repo_root, SALIENT_OBJECTS_WORKFLOW_PATH),
         )
-        self.logger.log(f"Template Workflow path: {self.template_workflow_path}")
-
-        # load json data from workflow
-        with open(self.template_workflow_path, "r") as f:
-            self.workflow = json.load(f)
-
-        # Copy project's input image to comfy input folder if it's not already there
-        comfy_input_folder = os.path.join(COMFY_PATH, "input")
-        pic_name = os.path.basename(self.project.config_file()["input_image_path"])
-        comfy_input_path = os.path.join(comfy_input_folder, pic_name)
-        if not os.path.exists(comfy_input_path):
-            self.logger.log(
-                f"Copying project's input image to comfy input folder: {comfy_input_folder}"
-            )
-            shutil.copy(
-                self.project.config_file()["input_image_path"], comfy_input_folder
-            )
-        else:
-            self.logger.log(
-                f"Project's input image already exists in comfy input folder: {comfy_input_folder}"
-            )
-
-        # Find {class_type : LoadImage} node in workflow and replace inputs.image with pic_name
-        load_image_index = None
-        for node_index, node in self.workflow.items():
-            if node["class_type"] == "LoadImage":
-                load_image_index = node_index
-                break
-        if load_image_index:
-            self.workflow[load_image_index]["inputs"]["image"] = pic_name
-        else:
-            raise ValueError("LoadImage node not found in salient object workflow")
-
-        # Change other aspects of the workflow here
-
-        # Save the modified workflow to this project's individual workflow dir (same name but prefixed with the project name)
-        path = os.path.join(
-            self.project.workflow_dir(),
-            f"{self.project.name}_salient_object_workflow.json",
-        )
-        with open(path, "w") as f:
-            json.dump(self.workflow, f, indent=4)
-        self.workflow_path = path
-        self.logger.log(
-            f"Custom Salient object workflow path for this project: {self.workflow_path}"
-        )
+        self.__update_workflow()
 
         # Construct comfy client with the custom workflow
-        self.comfy = ComfyClient(self.project, self.workflow_path)
-        self.comfy.queue_workflow()
+        try:
+            server = ComfyServer(
+                self.project,
+                self.logger,
+                output_directory=self.project.project_dir_path,
+                input_directory=self.project.project_dir_path,
+            )
+            server.start()
 
-        # Identify the most recent file in the comfy output folder that has the alpha layer prefix in its basename
-        comfy_output_folder = os.path.join(COMFY_PATH, "output")
-        alpha_layer_files = [
-            file
-            for file in os.listdir(comfy_output_folder)
-            if SALIENT_OBJECT_ALPHA_LAYER_PREFIX in file
-        ]
-        alpha_layer_files.sort(
-            key=lambda x: os.path.getmtime(os.path.join(comfy_output_folder, x))
-        )
-        self.alpha_layer_fullpath = os.path.join(
-            comfy_output_folder, alpha_layer_files[-1]
-        )
-        self.logger.log(
-            f"Most recent alpha layer file in comfy output folder: {self.alpha_layer_fullpath}"
-        )
-        shutil.copy(self.alpha_layer_fullpath, self.project.salient_objects_dir())
+            client = ComfyClient(self.project, self.workflow, self.logger)
+            client.queue_workflow()
+        except Exception as e:
+            self.logger.log(f"Error starting comfy server/client: {e}")
+            raise e
+        finally:
+            try:
+                server.kill()
+                client.disconnect()
+            except Exception as e:
+                self.logger.log(f"Error stopping comfy server/client: {e}")
 
-        # TODO: the inpainted base layer (with the salient object removed) serves as the new base image for the slicing, inpainting, etc.
+        alpha_layer = [
+            f
+            for f in os.listdir(self.project.project_dir_path)
+            if SALIENT_OBJECT_ALPHA_LAYER_PREFIX in f
+        ][-1]
+        self.alpha_layer_fullpath = os.path.join(self.project.project_dir_path, alpha_layer)
+        base_layer = [
+            f
+            for f in os.listdir(self.project.project_dir_path)
+            if BASE_LAYER_WITHOUT_OBJECTS_PREFIX in f
+        ][-1]
 
-        # Identify the most recent file in the comfy output folder that has the base layer without objects prefix in its basename
-        base_layer_files = [
-            file
-            for file in os.listdir(comfy_output_folder)
-            if BASE_LAYER_WITHOUT_OBJECTS_PREFIX in file
-        ]
-        base_layer_files.sort(
-            key=lambda x: os.path.getmtime(os.path.join(comfy_output_folder, x))
+        # Set the inpainted base image (with objects removed) as the new input image
+        self.project.update_config(
+            "input_image_original_path", self.project.config_file()["input_image_path"]
         )
-        self.base_layer_fullpath = os.path.join(
-            comfy_output_folder, base_layer_files[-1]
-        )
-        self.logger.log(
-            f"Most recent base layer file in comfy output folder: {self.base_layer_fullpath}"
+        self.project.update_config(
+            "input_image_path", os.path.join(self.project.project_dir_path, base_layer)
         )
 
-        # Copy the base layer to the project dir named "input-base_layer_no_objects"
-        base_layer_dest_path = self.project.config_file()["project_dir_path"]
-        base_layer_dest_path = os.path.join(
-            base_layer_dest_path, "input-base_layer_no_objects.png"
-        )
-        shutil.copy(self.base_layer_fullpath, base_layer_dest_path)
-        # Update the project's config file with the new base layer path
-        # TODO: create new property specifying the path to the old input image prior to separation with salient object(s)
-        self.project.update_config("input_image_path", base_layer_dest_path)
-
-        self.set_original_layer()
-        self.set_layer_breakpoints()
-        self.set_parent_layer()
+        self.__set_original_layer()
+        self.__set_layer_breakpoints()
+        self.__set_parent_layer()
         self.layer_config = self.project.config_file()["layers"][
             self.parent_layer_index
         ]
         self.logger.log(
             f"Parent layer for salient object {self.index} determined as: layer_{self.parent_layer_index+1}"
         )
-        self.logger.log(f"Parent layer config: {self.layer_config}")
-        self.name_prefix = f"salient_object_{self.index}"
+        self.logger.log(
+            f"Parent layer config: {self.layer_config}", pad_with_rules=False
+        )
 
-        exit()
-
-        self.slide_distance = 0
-        # NOTE: total steps start at -1 for now because the first image is skipped (saving the first layer slices before any inpainting in the current workflow)
-        self.total_steps = -1
-        self.set_step_images()
-        self.set_original_layer()
-
-        self.duration = int(self.total_steps * self.project_config["seconds_per_step"])
+    def create_cropped_steps(self) -> None:
+        sample_layer_dir = os.listdir(self.project.cropped_steps_dir())[0]
+        # TODO: determine num_steps at a more global scope in a non error-prone way
+        self.total_steps = (
+            len(
+                os.listdir(
+                    os.path.join(self.project.cropped_steps_dir(), sample_layer_dir)
+                )
+            )
+            - 1  # NOTE: -1 because the first image is skipped for now
+        )
+        self.slide_distance = abs(self.get_x_velocity() * self.total_steps)
+        self.duration = int(
+            self.total_steps * self.project.config_file()["seconds_per_step"]
+        )
         self.output_vid_width = self.original_layer["image"].width
 
-    def set_original_layer(self):
+        # Create an empty alpha image with height the same as the base image and width = (total_steps * velocity) - ((total_steps + 1) * feathering_margin)
+        width = (self.total_steps * self.get_x_velocity()) - (
+            (self.total_steps + 1) * FEATHERING_MARGIN
+        )
+        alpha_image = Image.new(
+            "RGBA",
+            (width, self.original_layer["image"].height),
+            (0, 0, 0, 0),
+        )
+        self.cropped_step_images = [
+            {
+                "image": alpha_image,
+            }
+        ]
+
+    def stitch_cropped_steps(self) -> None:
+        width = self.get_final_layer_width()
+        height = self.get_final_layer_height()
+
+        stitched_image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+
+        x_offset = 0
+        stitched_image.paste(self.original_layer["image"], (x_offset, 0))
+        x_offset += self.original_layer["image"].width - FEATHERING_MARGIN
+        stitched_image.paste(self.cropped_step_images[0]["image"], (x_offset, 0))
+
+        output_filename = f"{self.name_prefix}_stitched_alpha_layer.png"
+        output_fullpath = os.path.join(
+            self.project.stitched_objects_dir(), output_filename
+        )
+        stitched_image.save(output_fullpath)
+
+        self.stitched = {
+            "image": stitched_image,
+        }
+        update_path_parts(self.stitched, output_fullpath)
+
+        self.logger.log(
+            f"Stitched alpha layer saved to: {output_fullpath}",
+            pad_with_rules=False,
+        )
+
+    def create_layer_videoclip(self) -> VideoClip:
+        image_clip = ImageClip(self.stitched["fullpath"])
+
+        def make_frame(t):
+            # Print progress and x-coordinate of the layer every 10 seconds if devmode
+            if DEV and t % 10 == 0 and t != 0:
+                print(
+                    colored(f"{self.name_prefix} at {t}seconds", "light_green"),
+                    colored("progress (t / duration): ", "green"),
+                    f"{t / self.duration}",
+                )
+                print(
+                    colored(
+                        f"Layer_{self.name_prefix} current x-coordinate (self.slide_distance * (t / duration): ",
+                        "light_blue",
+                    ),
+                    f"{int(self.slide_distance * (t / self.duration))}",
+                )
+
+            x = int(self.slide_distance * (t / self.duration))
+            return image_clip.get_frame(t)[:, x : x + self.output_vid_width]
+
+        return VideoClip(make_frame, duration=self.duration)
+
+    def __set_original_layer(self):
         self.original_layer = {
             "image": Image.open(self.alpha_layer_fullpath),
         }
         update_path_parts(self.original_layer, self.alpha_layer_fullpath)
 
-    def set_layer_breakpoints(self):
+    def __set_layer_breakpoints(self):
         self.layer_height_breakpoints = [0]
         layer_configs = self.project.config_file()["layers"]
         if len(layer_configs) == 1:
@@ -171,7 +200,7 @@ class SalientObjectLayer(LayerInterface):
                 self.layer_height_breakpoints[-1] + layer["height"]
             )
 
-    def find_lowest_non_alpha_pixel(self):
+    def __find_lowest_non_alpha_pixel(self):
         width, height = self.original_layer["image"].size
         lowest_pixel = None
 
@@ -189,12 +218,12 @@ class SalientObjectLayer(LayerInterface):
             if lowest_pixel:
                 break
 
-    def set_parent_layer(self):
+    def __set_parent_layer(self):
         """Determine the parent layer for this salient object.
         First, determine the lowest point in the salient object original image which has a non-alpha pixel (i.e., the lowest non-alpha pixel).
         Then, determine which layer contains that point.
         """
-        lowest_non_alpha_pixel = self.find_lowest_non_alpha_pixel()
+        lowest_non_alpha_pixel = self.__find_lowest_non_alpha_pixel()
         self.logger.log(f"Lowest non-alpha pixel: {lowest_non_alpha_pixel}")
 
         # Default is the last layer (lowest) because if the loop doesn't break, then the salient object's lowest non-alpha pixel isnt below any of the layer breakpoints
@@ -216,19 +245,58 @@ class SalientObjectLayer(LayerInterface):
 
     def get_final_layer_height(self):
         # Add cleaning, adjusting, or type changing logic
-        return int(self.layer_config["height"])
+        return int(self.original_layer["image"].height)
 
     def get_final_layer_width(self):
-        width = 0
-        # Add the width of all cropped inpainted regions minus the feathering margin
-        for image in self.cropped_step_images:
-            width += image["image"].width
-            width -= FEATHERING_MARGIN
+        return self.slide_distance + self.original_layer["image"].width
 
-        # Add the length of the original layer onto which the inpainted regions are stitched
-        width += self.original_layer["image"].width - FEATHERING_MARGIN
+    def __update_workflow(self):
+        # Set the input image for the salient object workflow as the project's input image
+        self.workflow.update(
+            "LoadImage",
+            "image",
+            os.path.basename(self.project.config_file()["input_image_path"]),
+        )
 
-        # Subtract 1 feathering margin because the last image doesn't have a feathering margin
-        width -= FEATHERING_MARGIN
+        self.workflow.update(
+            "Save Inpainted Base Layer",
+            "filename_prefix",
+            BASE_LAYER_WITHOUT_OBJECTS_PREFIX,
+        )
 
-        return width
+        self.workflow.update(
+            "Save Alpha Layer",
+            "filename_prefix",
+            SALIENT_OBJECT_ALPHA_LAYER_PREFIX,
+        )
+
+        # Add the salient object tags to the negative prompt for the inpainting (so that when inpainted, the same types of objects are not just recreated in the place they were extracted from)
+        self.workflow.update(
+            "CLIP Text Encode (Negative Prompt)",
+            "text",
+            self.prompt_tags.replace(" . ", ", "),
+            append=True,
+        )
+        self.workflow.update(
+            "Negative Prompt - Fill Object Region with BG Content Only",
+            "text",
+            self.prompt_tags.replace(" . ", ", "),
+            append=True,
+        )
+        
+        # Also add to the auto-prompt exclude list so the tagger that generates the prompt doesn't include the salient object tags
+        self.workflow.update(
+            "Auto Prompt Exclude List",
+            "prompt",
+            self.prompt_tags.replace(" . ", ", "),
+            append=True,
+        )
+
+        # Set the salient object tags (descriptors) from the project's config file
+        self.workflow.update(
+            "Generalized Salient Object Tags (Descriptors)",
+            "prompt",
+            self.prompt_tags,
+        )
+
+        self.workflow.save()

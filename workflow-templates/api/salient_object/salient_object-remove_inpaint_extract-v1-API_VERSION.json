@@ -270,7 +270,7 @@
     },
     "class_type": "SaveImage",
     "_meta": {
-      "title": "Save Image"
+      "title": "Save Inpainted Base Layer"
     }
   },
   "24": {
@@ -323,7 +323,7 @@
     },
     "class_type": "SaveImage",
     "_meta": {
-      "title": "Save Image"
+      "title": "Save Alpha Layer"
     }
   }
 }

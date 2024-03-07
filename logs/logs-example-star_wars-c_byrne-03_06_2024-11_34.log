@@ -1,0 +1,68 @@
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] (Project Workflow) Created Copy in Project Dir of Workflow Template
+           /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_ob
+          ject/salient_object-remove_inpaint_extract-v1-API_VERSION.json
+——————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] (Project Workflow) Updating LoadImage's image value
+           from Cole_Thomas_The_Course_of_Empire_Destruction_1836 (2).jpg to /home/c_
+          byrne/projects/infinite-parallax/src/data/projects/example-star_wars/star_w
+          ars-medium.jpg[DEVMODE] (Project Workflow) Updating Generalized Salient Object Tags (Descriptors)'s prompt value
+           from salient objects, statue, skyscraper, pillar, flag, column to man . pe
+          rson . silhouette
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Trying to find path to python version compatible with comfy server
+           version 3.10.6
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Using python path
+           /home/c_byrne/.pyenv/versions/3.10.6/bin/python
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] This is the command that will be used to start comfy
+           ['/home/c_byrne/.pyenv/versions/3.10.6/bin/python', '/home/c_byrne/tools/s
+          d/sd-interfaces/ComfyUI/main.py', '--port', '8188', '--output-directory', '
+          /home/c_byrne/projects/infinite-parallax/projects/example-star_wars', '--in
+          put-directory', '/home/c_byrne/projects/infinite-parallax/projects/example-
+          star_wars', '--disable-auto-launch', '--disable-metadata']
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Comfy server status
+           Not running. Starting new server in detached process
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Comfy
+          Comfy server started
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] (Project Workflow) Created Copy in Project Dir of Workflow Template
+           /home/c_byrne/projects/infinite-parallax/projects/example-star_wars/projec
+          t_workflows/salient_object-remove_inpaint_extract-v1-API_VERSION-example-st
+          ar_wars.json
+——————————————————————————————————————————————————————————————————————————————————
+[DEVMODE] Comfy server connection attempt 1/18
+           failed[DEVMODE] Comfy server connection attempt 2/18
+           failed[DEVMODE] Comfy server connection attempt 3/18
+           failed[DEVMODE] Comfy server connection attempt 4/18
+           failed[DEVMODE] Comfy server connection attempt 5/18
+           failed[DEVMODE] Comfy server connection attempt 6/18
+           failed[DEVMODE] Comfy server connection attempt 7/18
+           failed[DEVMODE] Comfy server connection attempt 8/18
+           failed
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Queueing workflow at
+           11_34
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Error with Comfy API Client process
+           HTTP Error 400  Bad Request
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Error starting comfy server/client
+           HTTP Error 400  Bad Request
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Comfy
+          Comfy server stopped
+——————————————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————— 11:34PM ————————————————[DEVMODE] Disconnect Client Attempt
+           Client is already disconnected
+——————————————————————————————————————————————————————————————————————————————————
