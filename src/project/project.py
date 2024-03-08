@@ -17,8 +17,6 @@ from utils.check_make_dir import check_make_dir
 from interfaces.project_interface import ProjectInterface
 from parallax_video.video import ParallaxVideo
 from log.logging import Logger
-from PIL import Image
-from termcolor import colored
 
 
 class ParallaxProject(ProjectInterface):

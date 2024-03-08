@@ -7,7 +7,6 @@ from inpaint.inpaint_loop import InpaintLooper
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
 from interfaces.logger_interface import LoggerInterface
-from termcolor import colored
 from constants import (
     VIDEO_CODEC,
     DEV,
@@ -100,7 +99,8 @@ class ParallaxVideo:
         for layer in self.object_layers:
             layer_videoclip = layer.create_layer_videoclip()
             layer_videoclip = layer_videoclip.set_position((0, 0))
-            layer_clips.append(layer_videoclip)
+            if layer_videoclip:
+                layer_clips.append(layer_videoclip)
 
         return layer_clips
 
@@ -171,7 +171,7 @@ class ParallaxVideo:
         for index, tags in enumerate(self.project.config_file()["salient_objects"]):
             # Sometimes layers will return False (because nothing was segmented/extracted)
             object_layer = SalientObjectLayer(self.project, self.logger, tags, index)
-            if object_layer:
+            if object_layer and object_layer.is_layer:
                 layers.append(object_layer)
 
         return layers

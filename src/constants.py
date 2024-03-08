@@ -1,7 +1,7 @@
 # Adjust
 DEV = True
 COMFY_PATH = "/home/c_byrne/tools/sd/sd-interfaces/ComfyUI"
-FEATHERING_MARGIN = 8  # Recommended: 2-12 (px)
+FEATHERING_MARGIN = 2  # Recommended: 2-12 (px)
 
 # Don't Need to Adjust
 PROJECT_DATA_REL_PATH = "projects" # rel path from repo root

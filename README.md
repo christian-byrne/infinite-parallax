@@ -9,6 +9,7 @@ This project combines these ideas. Instead of iteratively shrinking an image and
 
 ## Examples
 
+
 **Input Image**
 
 ![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight](docs/demo/1600px-Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight_-_Google_Art_Project.jpg)
@@ -18,9 +19,9 @@ This project combines these ideas. Instead of iteratively shrinking an image and
 **Output Video**
 
 
-![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](projects/dresden/output/dresden-final_parallax_video.gif)
+![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](projects/example-dresden/output/dresden-final_parallax_video.gif)
 
-Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, background, foreground), Smoothness: 12, FPS: 30, [Config File](projects/dresden/config.json), [Generated Dir](projects/dresden)
+Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, midground, foreground), Objects: 1 (Dresden Frauenkirche - domed building) Smoothness: 12, FPS: 30, [Config File](projects/example-dresden/config.json), [Generated Dir](projects/example-dresden)
 
 ## Process
 
@@ -29,6 +30,8 @@ Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, background, foreground),
 
 ## TODO
 
+- [x] Large number of objects testing
+- [x] Update current input-image between object extraction steps in order to iteratively remove objects and inpaint negative space
 - [x] Expand mask with feathering and blur before extracting alpha layer
 - [ ] venv consolidate with all necessary versions of python
 - [ ] Salient objects
@@ -66,6 +69,7 @@ Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, background, foreground),
   - [ ] Color correction
 - [ ] Sizing standardization solution from tensorflow to PIL
   - [ ] Crop `ERROR_MARGIN` pixels from top of first layer and bottom of last layer 
+- [ ] Auto create reversed version and ping-ponged version after export
 - [ ] Finalize
   - [x] Create simple example project
   - [ ] Update README

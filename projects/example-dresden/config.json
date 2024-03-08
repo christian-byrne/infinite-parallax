@@ -1,0 +1,122 @@
+{
+    "created_at": "Fri Mar  8 07:43:56 2024",
+    "original_input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden old/1600px-Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight_-_Google_Art_Project.jpg",
+    "input_image_width": 1600,
+    "input_image_height": 949,
+    "direction": 180.0,
+    "direction_theta": 3.141592653589793,
+    "velocity_vector": [
+        -1,
+        0
+    ],
+    "smoothness": 12,
+    "seconds_per_step": 8,
+    "fps": 30,
+    "salient_objects": [
+        [
+            "building",
+            "church",
+            "tower",
+            "clocktower",
+            "spire"
+        ]
+    ],
+    "max_steps": 51,
+    "total_steps": 8,
+    "prompt_prepend": "masterpiece, painting of Dresden at moonlight by Johan Christian Dahl, history painting, genre painting, Bernardo Bellotto, Thomas Cole, Hudson River School, Romantic oil painting, American Romanticism, german romanticism, , scenery, gothic landscape, water, scenery, dark matte oil painting, detailed",
+    "layers": [
+        {
+            "height": 280,
+            "distance": 280.0,
+            "distance_ratio": 0.1761006289308176,
+            "velocity": [
+                -49.8,
+                0.0
+            ],
+            "steps_x": 23,
+            "steps_y": 0
+        },
+        {
+            "height": 265,
+            "distance": 610.0,
+            "distance_ratio": 0.3836477987421384,
+            "velocity": [
+                -18,
+                0.0
+            ],
+            "steps_x": 51,
+            "steps_y": 0
+        },
+        {
+            "height": 150,
+            "distance": 500.0,
+            "distance_ratio": 0.31446540880503143,
+            "velocity": [
+                -28.7,
+                0.0
+            ],
+            "steps_x": 41,
+            "steps_y": 0
+        },
+        {
+            "height": 120,
+            "distance": 130.0,
+            "distance_ratio": 0.08176100628930817,
+            "velocity": [
+                -144.8,
+                0.0
+            ],
+            "steps_x": 10,
+            "steps_y": 0
+        },
+        {
+            "height": 134,
+            "distance": 70.0,
+            "distance_ratio": 0.0440251572327044,
+            "velocity": [
+                -169.8,
+                0.0
+            ],
+            "steps_x": 5,
+            "steps_y": 0
+        }
+    ],
+    "project_dir_path": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden",
+    "config_path": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden/config.json",
+    "project_name": "example-dresden",
+    "version": [
+        0,
+        1,
+        7
+    ],
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden/base_layer-salient_object_removed-1_00001_.png",
+    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden/1600px-Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight_-_Google_Art_Project.jpg",
+    "salient_object_layers": [
+        {
+            "index": 0,
+            "name_prefix": "salient_object_1",
+            "prompt_tags": "building . church . tower . clocktower . spire",
+            "parent_layer_index": 2,
+            "alpha_layer_fullpath": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden/objects/alpha_layers/salient_objects/salient_object_alpha_layer-1.png",
+            "base_layer_fullpath": "/home/c_byrne/projects/infinite-parallax/projects/example-dresden/base_layer-salient_object_removed-1_00001_.png",
+            "layer_height_breakpoints": [
+                0,
+                280,
+                545,
+                695,
+                815
+            ],
+            "layer_config": {
+                "height": 120,
+                "distance": 130.0,
+                "distance_ratio": 0.08176100628930817,
+                "velocity": [
+                    -24.8,
+                    0.0
+                ],
+                "steps_x": 10,
+                "steps_y": 0
+            }
+        }
+    ]
+}

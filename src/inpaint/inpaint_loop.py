@@ -46,7 +46,12 @@ class InpaintLooper:
         self.workflow.update(
             "GrowMaskWithBlur",
             "expand",
-            int(FEATHERING_MARGIN * 1.25)
+            int(FEATHERING_MARGIN * 1.85)
+        )
+        self.workflow.update(
+            "GrowMaskWithBlur",
+            "blur_radius",
+            FEATHERING_MARGIN / 4
         )
 
     def log(self, *args, **kwargs):
