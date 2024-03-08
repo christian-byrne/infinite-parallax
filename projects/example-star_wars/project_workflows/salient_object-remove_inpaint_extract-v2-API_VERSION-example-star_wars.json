@@ -56,7 +56,7 @@
     },
     "8": {
         "inputs": {
-            "image": "base_layer-salient_object_removed_00001_.png",
+            "image": "base_layer-salient_object_removed_00010_.png",
             "upload": "image"
         },
         "class_type": "LoadImage",

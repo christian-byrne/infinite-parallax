@@ -1,0 +1,62 @@
+{
+    "created_at": "Wed Mar  6 21:20:28 2024",
+    "original_input_image_path": "/home/c_byrne/star_wars-medium.jpg",
+    "input_image_width": 800,
+    "input_image_height": 467,
+    "direction": 180.0,
+    "direction_theta": 3.141592653589793,
+    "velocity_vector": [
+        -1,
+        0
+    ],
+    "smoothness": 62,
+    "seconds_per_step": 5,
+    "fps": 60,
+    "max_steps": 7,
+    "layers": [
+        {
+            "height": 400,
+            "distance": 50.0,
+            "distance_ratio": 0.5681818181818182,
+            "velocity": [
+                -15,
+                0.0
+            ],
+            "steps_x": 7,
+            "steps_y": 0
+        },
+        {
+            "height": 137,
+            "distance": 38.0,
+            "distance_ratio": 0.4318181818181818,
+            "velocity": [
+                -40,
+                0.0
+            ],
+            "steps_x": 5,
+            "steps_y": 0
+        }
+    ],
+    "project_dir_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars",
+    "config_path": "/home/c_byrne/projects/infinite-parallax/src/data/projects/example-star_wars/config.json",
+    "project_name": "example-star_wars",
+    "salient_objects": [
+        [
+            "man",
+            "person",
+            "silhouette",
+            "human",
+            "1boy",
+            "2boys",
+            "lightsaber",
+            "neon sign"
+        ]
+    ],
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00001_.png",
+    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00001_.png",
+    "version": [
+        0,
+        1,
+        21
+    ]
+}

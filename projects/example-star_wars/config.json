@@ -52,6 +52,11 @@
             "neon sign"
         ]
     ],
-    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00001_.png",
-    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00001_.png"
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00010_.png",
+    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00010_.png",
+    "version": [
+        0,
+        1,
+        33
+    ]
 }

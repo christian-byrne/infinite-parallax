@@ -1,0 +1,29 @@
+
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[PROJECT MANAGER] Loading/Creating Project:
+                  example-star_wars by c_byrne
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[PROJECT MANAGER] Repo Root:
+                  /home/c_byrne/projects/infinite-parallax
+[PROJECT MANAGER] Project Dir Path:
+                  /home/c_byrne/projects/infinite-parallax/projects/example-star_wars
+[PROJECT MANAGER] Loading Existing Project Found At:
+                  /home/c_byrne/projects/infinite-parallax/projects/example-star_wars
+[WORKFLOW MANAGER] (Project Workflow) Created Copy In Project Dir Of Workflow Template:
+                   /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_object/salient_obje
+                   ct-remove_inpaint_extract-v2-API_VERSION.json
+[WORKFLOW MANAGER] (Project Workflow) Updating Loadimage'S Image Value:
+                   from star_wars-medium.jpg to base_layer-salient_object_removed_00001_.png
+[WORKFLOW MANAGER] (Project Workflow) Updating Save Inpainted Base Layer'S Filename_Prefix Value:
+                   from salient_object_removed to base_layer-salient_object_removed
+[WORKFLOW MANAGER] (Project Workflow) Save Alpha Layer'S Filename_Prefix Value Is Already Set To:
+                   salient_object_alpha_layer
+[WORKFLOW MANAGER] (Project Workflow) Clip Text Encode (Negative Prompt)'S Text Value Appended With:
+                   man, person, silhouette, human, 1boy, 2boys, lightsaber, neon sign
+[WORKFLOW MANAGER] (Project Workflow) Negative Prompt - Fill Object Region With Bg Content Only'S Text Value Appended With:
+                   man, person, silhouette, human, 1boy, 2boys, lightsaber, neon sign
+[WORKFLOW MANAGER] (Project Workflow) Auto Prompt Exclude List'S Prompt Value Appended With:
+                   man, person, silhouette, human, 1boy, 2boys, lightsaber, neon sign
+[WORKFLOW MANAGER] (Project Workflow) Updating Generalized Salient Object Tags (Descriptors)'S Prompt Value:
+                   from multiple_girls . multiple_boys . 1girl . man . woman . 1boy . salient objects . men . 
+                   person . human to man . person . silhouette . human . 1boy . 2boys . lightsaber . neon sign

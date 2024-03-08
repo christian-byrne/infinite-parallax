@@ -30,66 +30,62 @@ class ParallaxProject(ProjectInterface):
     creating layer video clips, and generating the final parallax video.
     """
 
-    def __init__(self, project_name, author=None, version="0.1.0"):
+    def __init__(self, project_name, author=None):
         self.name = project_name
-        self.version = version
         if not author:
-            try:
-                self.author = os.getenv("USER")
-            except Exception as e:
-                print(f"Couldn't get author name: {e}")
-                self.author = "Unknown"
+            self.__set_author()
         else:
             self.author = author
 
         self.repo_root = os.path.join(
             os.path.dirname(__file__).split("infinite-parallax")[0], "infinite-parallax"
         )
+        self.logger = Logger(self)
         self.init_project_structure()
-        self.logger = Logger(self.name, self.author, self.version)
 
-        # if self.NEW_PROJECT or True:
         if self.NEW_PROJECT:
+            self.update_config("version", self.version)
             # perhaps it's best to try to re-copy image and re-create original layers everytime
             # because maybe the user wants to change the input image but keep everything else (config, etc.)
             self.copy_input_image_to_project_dir()
             self.input_image = Image.open(self.config_file()["input_image_path"])
-
+    
         ParallaxVideo(self, self.logger)
 
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix="PROJECT MANAGER", *args, **kwargs)
+
     def init_project_structure(self):
-        cprint = lambda head, text: print(colored(head, "yellow") + text + "\n", end="")
-        cprint(
+        self.log(
             "Loading/Creating project: ",
-            f"{self.name} v{self.version} by {self.author}",
+            f"{self.name} by {self.author}",
+            pad_with_rules=True
         )
-
-        cprint("   Repo root: ", f"{self.repo_root}")
-
+        self.log("Repo root: ", f"{self.repo_root}")
         self.project_dir_path = os.path.join(
             self.repo_root, PROJECT_DATA_REL_PATH, self.name
         )
-        cprint("   Project dir path: ", f"{self.project_dir_path}")
+        self.log("Project dir path: ", f"{self.project_dir_path}")
 
         if not check_make_dir(self.project_dir_path):
-            cprint(
-                "   New Project. Project directory created at ",
+            self.log(
+                "New Project. Project directory created at:",
                 f"{self.project_dir_path}",
             )
             self.NEW_PROJECT = True
+            self.version = [0, 1, 0]
         else:
-            cprint(
-                "   Project directory already exists at ",
-                f"{self.project_dir_path}\n   Loading...",
+            self.log(
+                "Loading existing project found at:",
+                f"{self.project_dir_path}",
             )
             self.NEW_PROJECT = False
 
         self.config_file()
-
-        # Create folders for standard project structure
-        self.layer_outputs_dir()
-        self.salient_objects_dir()
-        self.workflow_dir()
+        if not self.NEW_PROJECT:
+            self.version = self.config_file()["version"]
+            self.version[2] += 1
+            self.update_config("version", self.version)
 
     def set_config(self):
         config = create_config()
@@ -173,5 +169,17 @@ class ParallaxProject(ProjectInterface):
         # Add stitched objects logic
         return path
 
-    def print_info(self):
-        print(f"\n\n{self.name} v{self.version} by {self.author}\n")
+    def __set_author(self):
+        try:
+            self.author = os.getenv("USER")
+        except KeyError:
+            # USER environment variable not set
+            self.author = "windows_user"
+        except (TypeError, PermissionError):
+            # USER environment variable not a string
+            self.author = "secure_user"
+        except ValueError:
+            # USER environment variable not valid
+            self.author = "nonASCII_user"
+        except Exception:
+            self.author = "unknown_user"

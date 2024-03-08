@@ -10,10 +10,12 @@ class ComfyAPIWorkflow:
         project: ProjectInterface,
         logger: LoggerInterface,
         workflow_template_path: str,
+        caller_preifx: str = "WORKFLOW MANAGER",
     ):
         self.project = project
         self.logger = logger
         self.workflow_template_path = workflow_template_path
+        self.caller_prefix = caller_preifx
 
         self.filename = (
             os.path.basename(self.workflow_template_path).replace(".json", "")
@@ -24,10 +26,13 @@ class ComfyAPIWorkflow:
         self.__set_workflow()
         self.__set_node_mappings()
         self.save()
-        self.logger.log(
-            "(Project Workflow) Created Copy in Project Dir of Workflow Template:",
+        self.log(
+            "Created Copy in Project Dir of Workflow Template:",
             self.workflow_template_path,
         )
+    
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
 
     def save(self):
         with open(self.path, "w") as workflow_file:
@@ -67,15 +72,15 @@ class ComfyAPIWorkflow:
             )
 
         if self.workflow_dict[index]["inputs"][key] == value:
-            self.logger.log(
-                f"(Project Workflow) {node_name}'s {key} value is already set to: {value}",
+            self.log(
+                f"{node_name}'s {key} value is already set to: {value}",
                 pad_with_rules=False,
             )
             return
 
         if append:
-            self.logger.log(
-                f"(Project Workflow) {node_name}'s {key} Value Appended with:",
+            self.log(
+                f"{node_name}'s {key} Value Appended with:",
                 value,
                 pad_with_rules=False,
             )
@@ -85,8 +90,8 @@ class ComfyAPIWorkflow:
             except TypeError:
                 self.workflow_dict[index]["inputs"][key] += value
         else:
-            self.logger.log(
-                f"(Project Workflow) Updating {node_name}'s {key} value:",
+            self.log(
+                f"Updating {node_name}'s {key} value:",
                 f"from {self.workflow_dict[index]['inputs'][key]} to {value}",
                 pad_with_rules=False,
             )
@@ -108,35 +113,6 @@ class ComfyAPIWorkflow:
             except KeyError:
                 node_name = "Unknown"
         return node_name
-
-    def print_node_progress(self, data):
-        """print a progress bar
-        progress dicts look like
-        {'type': 'progress', 'data': {'value': 34, 'max': 35, 'prompt_id': '4c4d1544-da2e-4321-806c-49070a8b865a', 'node': '17'}}
-        """
-        cur_node_name = self.parse_node_name(data)
-        # incomplete_char = "⬜️"
-        incomplete_char = "☐"
-        try:
-            # if value is even
-            if int(data["value"]) % 4 == 0:
-                # complete_char = "✨"
-                complete_char = "◴"
-            elif int(data["value"]) % 3 == 0:
-                # complete_char = "🌟"
-                complete_char = "◷"
-            elif int(data["value"]) % 2 == 0:
-                # complete_char = "⭐"
-                complete_char = "◶️"
-            else:
-                # complete_char = "💫"
-                complete_char = "◵"
-            print(
-                f"{cur_node_name}: {complete_char * data['value']}{incomplete_char * (data['max'] - data['value'])} {data['value']}/{data['max']}⏳",
-                end="\r",
-            )
-        except KeyError:
-            pass
 
     def __set_workflow(self):
         try:

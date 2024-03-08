@@ -3,6 +3,7 @@ from PIL import Image
 from moviepy.editor import VideoClip, ImageClip
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
+from interfaces.logger_interface import LoggerInterface
 from utils.update_path_parts import update_path_parts
 from utils.check_make_dir import check_make_dir
 from termcolor import colored
@@ -15,12 +16,14 @@ from constants import (
 
 class BaseLayer(LayerInterface):
     def __init__(
-        self, project: ProjectInterface, layer_config, name_prefix, layer_index
+        self, project: ProjectInterface, logger: LoggerInterface, layer_config, name_prefix, layer_index, caller_prefix="BASE LAYER"
     ):
         self.project = project
+        self.logger = logger
         self.layer_config = layer_config
         self.name_prefix = name_prefix
         self.index = layer_index
+        self.caller_prefix = f"{caller_prefix} {self.index}"
         self.slide_distance = 0
         # NOTE: total steps start at -1 for now because the first image is skipped (saving the first layer slices before any inpainting in the current workflow)
         self.total_steps = -1
@@ -32,6 +35,9 @@ class BaseLayer(LayerInterface):
         )
 
         self.output_vid_width = self.original_layer["image"].width
+    
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
 
     def get_x_velocity(self):
         # Add logic to clean, adjust, or change type of velocity

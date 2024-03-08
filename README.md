@@ -31,6 +31,7 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 ## TODO
 
 - [ ] Expand mask with feathering and blue before extracting alpha layer
+- [ ] venv consolidate with all necessary versions of python
 - [ ] Salient objects
   - [x] Segmentation prompt tags use correct separator/format
   - [x] Multiple iterations of salient object removal

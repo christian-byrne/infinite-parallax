@@ -28,10 +28,12 @@ class SalientObjectLayer(LayerInterface):
         logger: LoggerInterface,
         prompt_tags: list[str],
         object_index: int,
+        caller_prefix="OBJECT LAYER",
     ):
         self.project = project
         self.logger = logger
         self.index = object_index
+        self.caller_prefix = f"{caller_prefix} {self.index + 1}"
         self.name_prefix = f"salient_object_{self.index + 1}"
         self.prompt_tags = " . ".join(prompt_tags).strip()
 
@@ -39,6 +41,7 @@ class SalientObjectLayer(LayerInterface):
             self.project,
             self.logger,
             os.path.join(self.project.repo_root, SALIENT_OBJECTS_WORKFLOW_PATH),
+            "OBJECT-SEG > WF",
         )
         self.__update_workflow()
 
@@ -47,7 +50,7 @@ class SalientObjectLayer(LayerInterface):
         # Only generate salient objects layers and new base layer if they don't already exist
         if (
             not self.alpha_layer_fullpath
-            or input("\n\nUse existing salient object layers? (y/n):\n> ").lower()
+            or input("\n\nUse existing salient object layers? (y/n):" + self.logger.get_prompt()).lower()
             != "y"
         ):
             # Construct comfy client with the custom workflow
@@ -55,32 +58,33 @@ class SalientObjectLayer(LayerInterface):
                 server = ComfyServer(
                     self.project,
                     self.logger,
-                    output_directory=self.project.project_dir_path,
-                    input_directory=self.project.project_dir_path,
+                    self.project.project_dir_path,
+                    self.project.project_dir_path,
+                    "OBJECT-SEG > SERVER"
                 )
                 server.start()
 
-                client = ComfyClient(self.project, self.workflow, self.logger)
+                client = ComfyClient(self.project, self.workflow, self.logger, "OBJECT-SEG > CLIENT")
                 client.queue_workflow()
             except Exception as e:
-                self.logger.log(f"Error starting comfy server/client: {e}")
+                self.log(f"Error starting comfy server/client: {e}")
                 raise e
             finally:
                 try:
                     server.kill()
                     client.disconnect()
                 except Exception as e:
-                    self.logger.log(f"Error stopping comfy server/client: {e}")
+                    self.log(f"Error stopping comfy server/client: {e}")
 
             self.alpha_layer_fullpath, self.base_layer_fullpath = (
                 self.__get_comfy_outputs()
             )
 
-        self.logger.log(
+        self.log(
             f"Salient Object Alpha Layer: {self.alpha_layer_fullpath}",
             pad_with_rules=False,
         )
-        self.logger.log(
+        self.log(
             f"Base Layer Without Objects: {self.base_layer_fullpath}",
             pad_with_rules=False,
         )
@@ -96,13 +100,16 @@ class SalientObjectLayer(LayerInterface):
         self.layer_config = self.project.config_file()["layers"][
             self.parent_layer_index
         ]
-        self.logger.log(
+        self.log(
             f"Parent layer for salient object {self.index} determined as: layer_{self.parent_layer_index+1}"
         )
-        self.logger.log(
-            f"Parent layer config: {self.layer_config}", pad_with_rules=False
+        self.log(
+            f"Parent layer config: {self.layer_config}"
         )
 
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
+    
     def create_cropped_steps(self) -> None:
         sample_layer_dir = os.listdir(self.project.cropped_steps_dir())[0]
         # TODO: determine num_steps at a more global scope in a non error-prone way
@@ -157,7 +164,7 @@ class SalientObjectLayer(LayerInterface):
         }
         update_path_parts(self.stitched, output_fullpath)
 
-        self.logger.log(
+        self.log(
             f"Stitched alpha layer saved to: {output_fullpath}",
             pad_with_rules=False,
         )
@@ -232,7 +239,7 @@ class SalientObjectLayer(LayerInterface):
         self.layer_height_breakpoints = [0]
         layer_configs = self.project.config_file()["layers"]
         if len(layer_configs) == 1:
-            self.logger.log(
+            self.log(
                 "Setting layer breakpoints:",
                 "Only one layer in the project.",
                 "Salient object is in the only layer.",
@@ -268,20 +275,20 @@ class SalientObjectLayer(LayerInterface):
         Then, determine which layer contains that point.
         """
         lowest_non_alpha_pixel = self.__find_lowest_non_alpha_pixel()
-        self.logger.log(
+        self.log(
             f"Lowest non-alpha pixel: {lowest_non_alpha_pixel}", pad_with_rules=False
         )
 
         # Default is the last layer (lowest) because if the loop doesn't break, then the salient object's lowest non-alpha pixel isnt below any of the layer breakpoints
         self.parent_layer_index = len(self.layer_height_breakpoints) - 1
         for index, breakpoint in enumerate(self.layer_height_breakpoints):
-            self.logger.log(
+            self.log(
                 f"Testing layer {index+1} breakpoint: {breakpoint}",
                 pad_with_rules=False,
             )
             if lowest_non_alpha_pixel[1] < breakpoint:
                 self.parent_layer_index = index
-                self.logger.log(f"Salient object's lowest point is in layer {index+1}")
+                self.log(f"Salient object's lowest point is in layer {index+1}")
                 break
 
     def __update_workflow(self):
@@ -352,7 +359,7 @@ class SalientObjectLayer(LayerInterface):
                 os.path.join(self.project.project_dir_path, base_layer),
             )
         except IndexError:
-            self.logger.log(
+            self.log(
                 "Salient Object Alpha Layers: Not found",
             )
             return (False, False)

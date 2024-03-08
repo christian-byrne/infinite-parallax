@@ -19,14 +19,19 @@ class ComfyClient:
         project: ProjectInterface,
         workflow: ComfyAPIWorkflow,
         logger: LoggerInterface,
+        caller_prefix: str = "COMFY CLIENT",
     ):
         self.project = project
         self.workflow = workflow
         self.logger = logger
+        self.caller_prefix = caller_prefix
         self.server_url = f"http://localhost:{COMFY_PORT}"
         self.client_id = str(uuid.uuid4())
         self.__websocket = None
-        self.logger.log(f"New Comfy Client Created with ID: {self.client_id}")
+        self.log(f"New Comfy Client Created with ID: {self.client_id}")
+
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
 
     def is_connected(self):
         """
@@ -57,17 +62,26 @@ class ComfyClient:
                     f"ws://localhost:{COMFY_PORT}/ws?clientId={self.client_id}"
                 )
             except ConnectionRefusedError:
-                self.logger.log(
-                    f"Comfy server connection attempt {attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}: failed",
-                    pad_with_rules=False,
+                # self.log(
+                #     f"Comfy server connection attempt {attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}: failed",
+                #     pad_with_rules=False,
+                # )
+                self.logger.progress_bar(
+                    attempt + 1,
+                    COMFY_API_MAX_CONNECT_ATTEMPTS,
+                    "Server Connection Attempts",
+                    self.caller_prefix,
                 )
                 time.sleep(1)
                 continue
-            self.logger.log(
-                f"Comfy server connection attempt {attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}:",
-                "sucecceeded - connection established",
-                pad_with_rules=False,
-            )
+
+            if self.__websocket.connected:
+                self.log(
+                    "Comfy server connection attempt",
+                    f"{attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}:",
+                    "Succeeded - connection established",
+                )
+                break
 
         if not self.__websocket.connected:
             raise ConnectionError("Failed to connect to Comfy server")
@@ -80,10 +94,10 @@ class ComfyClient:
             None
         """
         if self.is_connected():
-            self.logger.log("Disconnecting Client from Comfy server")
+            self.log("Disconnecting Client from Comfy server")
             self.__websocket.close()
         else:
-            self.logger.log("Disconnect Client Attempt: Client is already disconnected")
+            self.log("Disconnect Client Attempt: Client is already disconnected")
 
     def queue_workflow(self):
         """
@@ -102,7 +116,7 @@ class ComfyClient:
 
         try:
             start_time_epoch = time.time()
-            self.logger.log(f"Queueing Workflow at: {time.strftime('%I:%M%p')}")
+            self.log(f"Queueing Workflow at: {time.strftime('%I:%M%p')}")
 
             self.__send_request()
             self.__listen_until_complete()
@@ -110,12 +124,12 @@ class ComfyClient:
             time_diff_formatted = time.strftime(
                 "%Mmin, %Ssec", time.gmtime(time.time() - start_time_epoch)
             )
-            self.logger.log(
+            self.log(
                 f"Comfy server finished processing request at: {time.strftime('%I:%M%p')} (Time elapsed - {time_diff_formatted})"
             )
 
         except Exception as e:
-            self.logger.log(f"Error with Comfy API Client process: {e}")
+            self.log(f"Error with Comfy API Client process: {e}")
             raise e
         finally:
             self.__websocket.close()
@@ -134,12 +148,17 @@ class ComfyClient:
 
     def __handle_response_message(self, message):
         if message["type"] == "status":
-            self.logger.log(message["data"]["status"], pad_with_rules=False)
-        if message["type"] == "progress":
-            self.workflow.print_node_progress(message["data"])
+            self.log(message["data"]["status"])
+        elif message["type"] == "progress":
+            self.logger.progress_bar(
+                message["data"]["value"],
+                message["data"]["max"],
+                self.workflow.parse_node_name(message["data"]),
+                self.caller_prefix,
+            )
         if message["type"] == "executing":
             cur_node_name = self.workflow.parse_node_name(message["data"])
-            self.logger.log(f"Executing Node: {cur_node_name}", pad_with_rules=False)
+            self.log(f"Executing Node: {cur_node_name}")
 
             if (
                 message["data"]["node"] is None

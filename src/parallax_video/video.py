@@ -14,9 +14,10 @@ from constants import (
 
 
 class ParallaxVideo:
-    def __init__(self, project: ProjectInterface, logger: LoggerInterface):
+    def __init__(self, project: ProjectInterface, logger: LoggerInterface, caller_prefix="VIDEO EDITOR"):
         self.project = project
         self.logger = logger
+        self.caller_prefix = caller_prefix
 
         self.object_layers = self.create_salient_object_layer()
 
@@ -36,11 +37,13 @@ class ParallaxVideo:
         self.layer_videoclips = self.create_layer_videoclips()
         self.object_layer_videoclips = self.create_object_layer_videoclips()
         self.composite_layer_videoclips()
+    
+    def log(self, *args, **kwargs):
+        self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
 
     def user_confirm(self):
         prompt = (
-            colored("\n[CONFIRM PROCEED]", "red")
-            + f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):\n> "
+            f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):" + self.logger.get_prompt()
         )
         decline_message = colored(
             "Please do so and then run the script again.\n\n", "red"
@@ -60,7 +63,7 @@ class ParallaxVideo:
         layers = []
         for index, layer_config in enumerate(self.project.config_file()["layers"]):
             name_prefix = f"layer_{index+1}"
-            layers.append(BaseLayer(self.project, layer_config, name_prefix, index + 1))
+            layers.append(BaseLayer(self.project, self.logger, layer_config, name_prefix, index + 1))
 
         return layers
 

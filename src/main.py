@@ -10,5 +10,4 @@ if __name__ == "__main__":
     project_name = input("\nEnter the name of the project:\n> ")
     print("\n")
     project = ParallaxProject(project_name)
-    project.print_info()
     # delete_test_projects()
