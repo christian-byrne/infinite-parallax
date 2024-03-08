@@ -1,0 +1,390 @@
+
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[PROJECT MANAGER] Loading/Creating Project:
+                  dresden by c_byrne
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[PROJECT MANAGER] Repo Root:
+                  /home/c_byrne/projects/infinite-parallax
+[PROJECT MANAGER] Project Dir Path:
+                  /home/c_byrne/projects/infinite-parallax/projects/dresden
+[PROJECT MANAGER] Loading Existing Project Found At:
+                  /home/c_byrne/projects/infinite-parallax/projects/dresden
+[OBJECT-SEG > WF] Created Copy In Project Dir Of Workflow Template:
+                  /home/c_byrne/projects/infinite-parallax/workflow-templates/api/salient_object/salient_objec
+                  t-remove_inpaint_extract-v2-API_VERSION.json
+[OBJECT-SEG > WF] Updating Loadimage'S Image Value:
+                  from star_wars-medium.jpg to 1600px-Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight_-_Go
+                  ogle_Art_Project.jpg
+[OBJECT-SEG > WF] Updating Save Inpainted Base Layer'S Filename_Prefix Value:
+                  from salient_object_removed to base_layer-salient_object_removed-1
+[OBJECT-SEG > WF] Updating Save Alpha Layer'S Filename_Prefix Value:
+                  from salient_object_alpha_layer to salient_object_alpha_layer-1
+[OBJECT-SEG > WF] Clip Text Encode (Negative Prompt)'S Text Value Appended With:
+                  building, church, tower, clocktower, spire
+[OBJECT-SEG > WF] Negative Prompt - Fill Object Region With Bg Content Only'S Text Value Appended With:
+                  building, church, tower, clocktower, spire
+[OBJECT-SEG > WF] Auto Prompt Exclude List'S Prompt Value Appended With:
+                  building, church, tower, clocktower, spire
+[OBJECT-SEG > WF] Updating Generalized Salient Object Tags (Descriptors)'S Prompt Value:
+                  from multiple_girls . multiple_boys . 1girl . man . woman . 1boy . salient objects . men . p
+                  erson . human to building . church . tower . clocktower . spire
+[OBJECT LAYER 1] Base Layer:
+                 Not found in project dir
+[OBJECT-SEG > SERVER] Trying To Find Path To Python Version Compatible With Comfy Server:
+                      version 3.10.6
+[OBJECT-SEG > SERVER] Using Python Path:
+                      /home/c_byrne/.pyenv/versions/3.10.6/bin/python
+[OBJECT-SEG > SERVER] This Is The Command That Will Be Used To Start Comfy:
+                      ['/home/c_byrne/.pyenv/versions/3.10.6/bin/python', '/home/c_byrne/tools/sd/sd-interface
+                      s/ComfyUI/main.py', '--port', '8188', '--output-directory', '/home/c_byrne/projects/infi
+                      nite-parallax/projects/dresden', '--input-directory', '/home/c_byrne/projects/infinite-p
+                      arallax/projects/dresden', '--disable-auto-launch', '--disable-metadata']
+[OBJECT-SEG > SERVER] Comfy Server Status:
+                      Not running. Starting new server in detached process
+[OBJECT-SEG > SERVER] Comfy 
+                      server started
+[OBJECT-SEG > CLIENT] New Comfy Client Created With Id:
+                      00e1e719-1c59-423c-bef8-c3aff44e4cf1
+[OBJECT-SEG > CLIENT] Comfy Server Connection Attempt 9/18:
+                      Succeeded - connection established
+[OBJECT-SEG > CLIENT] Queueing Workflow At:
+                      08:03AM
+[OBJECT-SEG > CLIENT] {'Exec_Info':
+                      {'queue_remaining': 0}}
+[OBJECT-SEG > CLIENT] {'Exec_Info':
+                      {'queue_remaining': 1}}
+[OBJECT-SEG > CLIENT] {'Exec_Info':
+                      {'queue_remaining': 1}}
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Load Image
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Generalized Salient Object Tags (Descriptors)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      SAMModelLoader (segment anything)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      GroundingDinoModelLoader (segment anything)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      GroundingDinoSAMSegment (segment anything)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Join Image with Alpha
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Preview Image
+[OBJECT-SEG > CLIENT] Executing Node:
+                      InvertMask
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Join Image with Alpha (Inverted Mask)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Save Alpha Layer
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Load Checkpoint
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Positive Prompt - Fill Object Region with BG Content Only
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Negative Prompt - Fill Object Region with BG Content Only
+[OBJECT-SEG > CLIENT] Executing Node:
+                      GrowMaskWithBlur - First Inpaint Mask Step 1
+[OBJECT-SEG > CLIENT] Executing Node:
+                      GrowMaskWithBlur - First Inpaint Mask Step 2
+[OBJECT-SEG > CLIENT] Executing Node:
+                      InpaintModelConditioning - First Inpainting
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Intermediate KSampler (for auto tagger input)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      First Inpainted Output - For Auto Prompt Generation
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Auto Prompt Exclude List
+[OBJECT-SEG > CLIENT] Executing Node:
+                      WD14 Tagger 🐍
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Show Text - Auto-Generated Prompt
+[OBJECT-SEG > CLIENT] Executing Node:
+                      CLIP Text Encode (Positive Prompt)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      CLIP Text Encode (Negative Prompt)
+[OBJECT-SEG > CLIENT] Executing Node:
+                      GrowMaskWithBlur - for Final Inpainting Mask
+[OBJECT-SEG > CLIENT] Executing Node:
+                      InpaintModelConditioning - Final Inpainting
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Final Inpainting KSampler
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Save Inpainted Base Layer
+[OBJECT-SEG > CLIENT] {'Exec_Info':
+                      {'queue_remaining': 0}}
+[OBJECT-SEG > CLIENT] Executing Node:
+                      Unknown
+[OBJECT-SEG > CLIENT] Comfy Server Finished Processing Request At:
+                      08:03AM (Time elapsed - 00min, 41sec)
+[OBJECT-SEG > SERVER] Comfy Process:
+                      server stopped
+[OBJECT-SEG > CLIENT] Disconnect Client Attempt:
+                      Client is already disconnected
+[OBJECT LAYER 1] Lowest Non-Alpha Pixel:
+                 (697, 571)
+[OBJECT LAYER 1] Testing Layer 1 Breakpoint:
+                 0
+[OBJECT LAYER 1] Testing Layer 2 Breakpoint:
+                 280
+[OBJECT LAYER 1] Testing Layer 3 Breakpoint:
+                 545
+[OBJECT LAYER 1] Testing Layer 4 Breakpoint:
+                 695
+[OBJECT LAYER 1] Salient 
+                 object's lowest point is in layer 4
+[OBJECT LAYER 1] Parent Layer For Salient Object 1 Determined As:
+                 layer_4
+[OBJECT LAYER 1] Parent Layer Config:
+                 {'height': 120, 'distance': 130.0, 'distance_ratio': 0.08176100628930817, 'velocity': [-146.8
+                 , 0.0], 'steps_x': 10, 'steps_y': 0}
+[OBJECT LAYER 1] Salient Object Alpha Layer:
+                 /home/c_byrne/projects/infinite-parallax/projects/dresden/objects/alpha_layers/salient_object
+                 s/salient_object_alpha_layer-1.png
+[OBJECT LAYER 1] Base Layer Without Objects:
+                 /home/c_byrne/projects/infinite-parallax/projects/dresden/base_layer-salient_object_removed-1
+                 _00001_.png
+[INPAINT LOOP] Inpainting Workflow Location:
+               /home/c_byrne/projects/infinite-parallax/workflow-templates/api/inpaint/inpaint_with_lora_stack
+               -API_VERSION.json
+[INPAINT-LOOP > WF] Created Copy In Project Dir Of Workflow Template:
+                    /home/c_byrne/projects/infinite-parallax/workflow-templates/api/inpaint/inpaint_with_lora_
+                    stack-API_VERSION.json
+[INPAINT-LOOP > WF] Updating Impactwildcardprocessor'S Wildcard_Text Value:
+                    from blue light, fog, lightsaber battle, neon blue lights, dark, steam, movie scene, star 
+                    wars, ultra detailed to masterpiece, painting of Dresden at moonlight by Johan Christian D
+                    ahl, history painting, genre painting, Bernardo Bellotto, Thomas Cole, Hudson River School
+                    , Romantic oil painting, American Romanticism, german romanticism, , scenery, gothic lands
+                    cape, water, scenery, dark matte oil painting, detailed
+[PREPROCESS > SHIFT] Separating 
+                     layers
+[INPAINT-LOOP > WF] Updating Loadimage'S Image Value:
+                    from start-step_00001_ (9).png to start_step_00001_.png
+[INPAINT-LOOP > SERVER] Trying To Find Path To Python Version Compatible With Comfy Server:
+                        version 3.10.6
+[INPAINT-LOOP > SERVER] Using Python Path:
+                        /home/c_byrne/.pyenv/versions/3.10.6/bin/python
+[INPAINT-LOOP > SERVER] This Is The Command That Will Be Used To Start Comfy:
+                        ['/home/c_byrne/.pyenv/versions/3.10.6/bin/python', '/home/c_byrne/tools/sd/sd-interfa
+                        ces/ComfyUI/main.py', '--port', '8188', '--output-directory', '/home/c_byrne/projects/
+                        infinite-parallax/projects/dresden/layers/layer_outputs', '--input-directory', '/home/
+                        c_byrne/projects/infinite-parallax/projects/dresden/layers/layer_outputs', '--disable-
+                        auto-launch', '--disable-metadata']
+[INPAINT-LOOP > SERVER] Comfy Server Status:
+                        Not running. Starting new server in detached process
+[INPAINT-LOOP > SERVER] Comfy 
+                        server started
+[IP-STEP 1 > CLIENT] New Comfy Client Created With Id:
+                     49c05092-83ff-482f-b8b9-a5d139803bdc
+[IP-STEP 1 > CLIENT] Comfy Server Connection Attempt 9/18:
+                     Succeeded - connection established
+[IP-STEP 1 > CLIENT] Queueing Workflow At:
+                     08:07AM
+[IP-STEP 1 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 1 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 1 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 1 > CLIENT] Executing Node:
+                     Load Image
+[IP-STEP 1 > CLIENT] Executing Node:
+                     WD14 Tagger 🐍
+[IP-STEP 1 > CLIENT] Executing Node:
+                     Load Checkpoint
+[IP-STEP 1 > CLIENT] Executing Node:
+                     💊 CR LoRA Stack
+[IP-STEP 1 > CLIENT] Executing Node:
+                     💊 CR Apply LoRA Stack
+[IP-STEP 1 > CLIENT] Executing Node:
+                     ImpactWildcardProcessor
+[IP-STEP 1 > CLIENT] Executing Node:
+                     Text Concatenate
+[IP-STEP 1 > CLIENT] Executing Node:
+                     CLIP Text Encode (Prompt)
+[IP-STEP 1 > CLIENT] Executing Node:
+                     CLIP Text Encode (Negative Prompt)
+[IP-STEP 1 > CLIENT] Executing Node:
+                     GrowMaskWithBlur
+[IP-STEP 1 > CLIENT] Executing Node:
+                     InpaintModelConditioning
+[IP-STEP 1 > CLIENT] Executing Node:
+                     KSampler (Advanced)
+[IP-STEP 1 > CLIENT] Executing Node:
+                     VAE Decode
+[IP-STEP 1 > CLIENT] Executing Node:
+                     Save Image
+[IP-STEP 1 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 1 > CLIENT] Executing Node:
+                     Unknown
+[IP-STEP 1 > CLIENT] Comfy Server Finished Processing Request At:
+                     08:07AM (Time elapsed - 00min, 23sec)
+[PREPROCESS > SHIFT] Separating 
+                     layers
+[INPAINT-LOOP > WF] Updating Loadimage'S Image Value:
+                    from start_step_00001_.png to start_step_00002_.png
+[IP-STEP 1 > CLIENT] Disconnect Client Attempt:
+                     Client is already disconnected
+[IP-STEP 2 > CLIENT] New Comfy Client Created With Id:
+                     f6049028-f66f-4550-922f-0757e7190da7
+[IP-STEP 2 > CLIENT] Comfy Server Connection Attempt 1/18:
+                     Succeeded - connection established
+[IP-STEP 2 > CLIENT] Queueing Workflow At:
+                     08:07AM
+[IP-STEP 2 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 2 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 2 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 2 > CLIENT] Executing Node:
+                     Load Image
+[IP-STEP 2 > CLIENT] Executing Node:
+                     WD14 Tagger 🐍
+[IP-STEP 2 > CLIENT] Executing Node:
+                     Text Concatenate
+[IP-STEP 2 > CLIENT] Executing Node:
+                     CLIP Text Encode (Prompt)
+[IP-STEP 2 > CLIENT] Executing Node:
+                     GrowMaskWithBlur
+[IP-STEP 2 > CLIENT] Executing Node:
+                     InpaintModelConditioning
+[IP-STEP 2 > CLIENT] Executing Node:
+                     KSampler (Advanced)
+[IP-STEP 2 > CLIENT] Executing Node:
+                     VAE Decode
+[IP-STEP 2 > CLIENT] Executing Node:
+                     Save Image
+[IP-STEP 2 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 2 > CLIENT] Executing Node:
+                     Unknown
+[IP-STEP 2 > CLIENT] Comfy Server Finished Processing Request At:
+                     08:08AM (Time elapsed - 00min, 20sec)
+[PREPROCESS > SHIFT] Separating 
+                     layers
+[INPAINT-LOOP > WF] Updating Loadimage'S Image Value:
+                    from start_step_00002_.png to start_step_00003_.png
+[IP-STEP 2 > CLIENT] Disconnect Client Attempt:
+                     Client is already disconnected
+[IP-STEP 3 > CLIENT] New Comfy Client Created With Id:
+                     010f7e1b-c692-4a6f-b79b-c1db091f385c
+[IP-STEP 3 > CLIENT] Comfy Server Connection Attempt 1/18:
+                     Succeeded - connection established
+[IP-STEP 3 > CLIENT] Queueing Workflow At:
+                     08:08AM
+[IP-STEP 3 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 3 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 3 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 3 > CLIENT] Executing Node:
+                     Load Image
+[IP-STEP 3 > CLIENT] Executing Node:
+                     WD14 Tagger 🐍
+[IP-STEP 3 > CLIENT] Executing Node:
+                     Text Concatenate
+[IP-STEP 3 > CLIENT] Executing Node:
+                     CLIP Text Encode (Prompt)
+[IP-STEP 3 > CLIENT] Executing Node:
+                     GrowMaskWithBlur
+[IP-STEP 3 > CLIENT] Executing Node:
+                     InpaintModelConditioning
+[IP-STEP 3 > CLIENT] Executing Node:
+                     KSampler (Advanced)
+[IP-STEP 3 > CLIENT] Executing Node:
+                     VAE Decode
+[IP-STEP 3 > CLIENT] Executing Node:
+                     Save Image
+[IP-STEP 3 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 3 > CLIENT] Executing Node:
+                     Unknown
+[IP-STEP 3 > CLIENT] Comfy Server Finished Processing Request At:
+                     08:08AM (Time elapsed - 00min, 20sec)
+[PREPROCESS > SHIFT] Separating 
+                     layers
+[INPAINT-LOOP > WF] Updating Loadimage'S Image Value:
+                    from start_step_00003_.png to start_step_00004_.png
+[IP-STEP 3 > CLIENT] Disconnect Client Attempt:
+                     Client is already disconnected
+[IP-STEP 4 > CLIENT] New Comfy Client Created With Id:
+                     0c062927-0e6e-485d-849c-6fa370a930c1
+[IP-STEP 4 > CLIENT] Comfy Server Connection Attempt 1/18:
+                     Succeeded - connection established
+[IP-STEP 4 > CLIENT] Queueing Workflow At:
+                     08:08AM
+[IP-STEP 4 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 4 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 4 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 1}}
+[IP-STEP 4 > CLIENT] Executing Node:
+                     Load Image
+[IP-STEP 4 > CLIENT] Executing Node:
+                     WD14 Tagger 🐍
+[IP-STEP 4 > CLIENT] Executing Node:
+                     Text Concatenate
+[IP-STEP 4 > CLIENT] Executing Node:
+                     CLIP Text Encode (Prompt)
+[IP-STEP 4 > CLIENT] Executing Node:
+                     GrowMaskWithBlur
+[IP-STEP 4 > CLIENT] Executing Node:
+                     InpaintModelConditioning
+[IP-STEP 4 > CLIENT] Executing Node:
+                     KSampler (Advanced)
+[IP-STEP 4 > CLIENT] Executing Node:
+                     VAE Decode
+[IP-STEP 4 > CLIENT] Executing Node:
+                     Save Image
+[IP-STEP 4 > CLIENT] {'Exec_Info':
+                     {'queue_remaining': 0}}
+[IP-STEP 4 > CLIENT] Executing Node:
+                     Unknown
+[IP-STEP 4 > CLIENT] Comfy Server Finished Processing Request At:
+                     08:09AM (Time elapsed - 00min, 20sec)
+[PREPROCESS > SHIFT] Separating 
+                     layers
+[INPAINT-LOOP > WF] Updating Loadimage'S Image Value:
+                    from start_step_00004_.png to start_step_00005_.png
+[IP-STEP 4 > CLIENT] Disconnect Client Attempt:
+                     Client is already disconnected
+[INPAINT-LOOP > SERVER] Comfy Process:
+                        server stopped
+[IP-STEP 4 > CLIENT] Disconnect Client Attempt:
+                     Client is already disconnected
+[INPAINT LOOP] Inpaint Loop:
+               Completed
+[VIDEO EDITOR] Creating:
+               Base layers
+[VIDEO EDITOR] Stitching:
+               Layer 1
+[VIDEO EDITOR] Stitching:
+               Layer 2
+[VIDEO EDITOR] Stitching:
+               Layer 3
+[VIDEO EDITOR] Stitching:
+               Layer 4
+[VIDEO EDITOR] Stitching:
+               Layer 5
+[VIDEO EDITOR] Extending:
+               Oject layer 1
+[OBJECT LAYER 1] Stitched Alpha Layer Saved To:
+                 /home/c_byrne/projects/infinite-parallax/projects/dresden/stitches/stitched_object_alphas/sal
+                 ient_object_1_stitched_alpha_layer.png
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[VIDEO EDITOR] Generating 
+               videoclips
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[VIDEO EDITOR] Generating 
+               videoclips for each base layer
+[VIDEO EDITOR] Generating 
+               videoclips and mask videoclips for each object layer
+[VIDEO EDITOR] Compositing Layer Videoclips
+
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————
+[VIDEO EDITOR] Final Video Saved To:
+               /home/c_byrne/projects/infinite-parallax/projects/dresden/output/dresden-final_parallax_video.m
+               p4
+——————————————————————————————————————————————————————————————————————————————————————————————————————————————

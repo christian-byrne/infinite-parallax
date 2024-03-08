@@ -5,9 +5,9 @@ In Unity, *infinite parallax* ([see example](https://www.youtube.com/watch?v=MEy
 
 In the realm of AI image generation, *infinite zoom* ([see example](https://www.youtube.com/watch?v=yDCUTyZD--E)) is a technique used to create the illusion of an infinite zoom, by taking an image, shrinking it, inpainting the padding around it to match the original size, repeating the process, and then stitching the images together into a video using linear [zoom transitions](https://www.youtube.com/watch?v=G01V09CWTJY&t=1s) and, finally, reversing it.
 
-This project combines these ideas. Instead of iteratively shrinking an image and inpainting the padding border, the image is sliced into layers and each layer is shifted in accordance with a given vector of motion. The layers are re-composited after being shifted and the gaps of empty space created by the shifting are inpainted side-by-side. This way, the inpainting process uses the context according to each layer's position at that given time. With a high number of inpainting steps per second, the layers can move at different speeds without totally disrupting the logical flow of the picture. Finally, the layer frames are stitched using linear [sliding transitions](https://www.youtube.com/shorts/S6Ywp-598HI) instead of zoom transitions. See demo below. 
+This project combines these ideas. Instead of iteratively shrinking an image and inpainting the padding border, the image is segmented into objects and base layers and each object/layer is shifted in accordance with a given vector of motion. The layers are re-composited after being shifted and the gaps of empty space created by the shifting are inpainted side-by-side. This way, the inpainting process uses the context according to each layer's position at that given time. With a high number of inpainting steps per second, the layers can move at different speeds without totally disrupting the logical flow of the picture. Finally, the layer frames are stitched using linear [sliding transitions](https://www.youtube.com/shorts/S6Ywp-598HI) instead of zoom transitions and the segmented objects are re-composited. See demo below. 
 
-## Demo
+## Examples
 
 **Input Image**
 
@@ -17,11 +17,10 @@ This project combines these ideas. Instead of iteratively shrinking an image and
 
 **Output Video**
 
-![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](docs/demo/demo-dresden-parallax.gif)
 
-Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smoothness: 117.5, FPS: 10
+![Johan_Christian_Dahl_-_View_of_Dresden_by_Moonlight-Infinite_Parallax](projects/dresden/output/dresden-final_parallax_video.gif)
 
-*Low quality, bad color conversion, and short length are just products of requiring a gif for github markdown compiler. In the full video, the parallax effect goes until the entire original image is gone*
+Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, background, foreground), Smoothness: 12, FPS: 30, [Config File](projects/dresden/config.json), [Generated Dir](projects/dresden)
 
 ## Process
 
@@ -30,7 +29,7 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 
 ## TODO
 
-- [ ] Expand mask with feathering and blue before extracting alpha layer
+- [x] Expand mask with feathering and blur before extracting alpha layer
 - [ ] venv consolidate with all necessary versions of python
 - [ ] Salient objects
   - [x] Segmentation prompt tags use correct separator/format
@@ -41,12 +40,12 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
   - [x] Extract alpha layer
   - [x] Inpaint new base layer and set as new start image
   - [x] Calculate motion vectors for each object alpha layer
-    - [ ] Determine object velocity from config (default: objects move according to their base layer, option: objects are static or barely move so as to highlight them)
+    - [x] Determine object velocity from config (default: objects move according to their base layer, option: objects are static or barely move so as to highlight them)
   - [x] Overlay alpha layers onto final video
   - [ ] Documentation - add the overlay process to the video composite process explanation
-- [ ] Segmentation for initial layers
-  - [ ] Edit methods to handle non-rectangular layers (CompositeVideoClip)
-  - [ ] Documentation
+- [x] Segmentation for initial layers
+  - [x] Edit methods to handle non-rectangular layers (CompositeVideoClip)
+  - [x] Documentation
 - [ ] Depth Maps 
   - [ ] Add autogeneration and condition hook to inpainting workflow
   - [ ] Documentation
@@ -55,26 +54,28 @@ Angle of Motion: 160°, Layers: 4 (clouds, horizon, background, foreground), Smo
 - [x] Use project-specific I/O directories
   - [x] As args when starting detached comfy process/server
   - [x] Use filename prefix constants for faster selection of output when server terminates
-- [ ] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
+- [x] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
   - [ ] Negative and positive velocity testing
-- [ ] Inpainting prompts (negative and positive) from config
-  - [ ] For salient object removal
-  - [ ] For layer shifts
-- [ ] Delete first image from each layer sequence or don't save in first place
+- [x] Inpainting prompts (negative and positive) from config
+  - [x] For salient object removal
+  - [x] For layer shifts
+- [x] Delete first image from each layer sequence or don't save in first place
 - [ ] Auomate video post-processing
   - [ ] Add sound from library
   - [ ] Color correction
 - [ ] Sizing standardization solution from tensorflow to PIL
   - [ ] Crop `ERROR_MARGIN` pixels from top of first layer and bottom of last layer 
 - [ ] Finalize
-  - [ ] Create simple example project
+  - [x] Create simple example project
   - [ ] Update README
   - [ ] Turn into ComfyUI node
   - [ ] Web view
 
 ## Reminders
 
+- A new comfy instance is not started if already running, but the running instance may have been started by user and therefore have different i/o directory args
 - Use the non-API workflows for editing manually otherwise you have to re-set the node titles each time
 - LoadImage nodes use relative paths from `--input-directory`
 - Smoothness a function of perceivability of pixel distance
+

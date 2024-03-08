@@ -25,13 +25,11 @@ class BaseLayer(LayerInterface):
         self.index = layer_index
         self.caller_prefix = f"{caller_prefix} {self.index}"
         self.slide_distance = 0
-        # NOTE: total steps start at -1 for now because the first image is skipped (saving the first layer slices before any inpainting in the current workflow)
-        self.total_steps = -1
         self.__set_original_layer()
         self.set_step_images()
 
         self.duration = (
-            self.total_steps * self.project.config_file()["seconds_per_step"]
+            self.project.config_file()["total_steps"] * self.project.config_file()["seconds_per_step"]
         )
 
         self.output_vid_width = self.original_layer["image"].width
@@ -87,7 +85,6 @@ class BaseLayer(LayerInterface):
         for step_image in all_step_images:
             if step_image.startswith(self.name_prefix):
                 temp.append(step_image)
-                self.total_steps += 1
         temp.sort()
 
         for step_image in temp:
@@ -103,20 +100,18 @@ class BaseLayer(LayerInterface):
         self.cropped_step_images = []
 
         for step_image in self.step_images:
-            # NOTE: Ignore the first image
-            # TODO: this is a temporary fix for the problem of the comfyUI workflow saving the layers of the original input image as well
+            # NOTE: Ignore the first image because it's just the slices of the original input image
             if step_image == self.step_images[0]:
                 continue
 
             cropped_step_image = {}
             image = Image.open(step_image["fullpath"])
-            # TODO: full vector range implementation
+            # TODO: Port full vector range implementation from preprocess code
             width = abs(self.get_x_velocity())
             if self.get_x_velocity() < 0:
                 x = image.width - width
             else:
                 x = 0
-            # TODO: y-axis velocity implementation
             y = 0
             height = image.height
 
@@ -137,8 +132,7 @@ class BaseLayer(LayerInterface):
         width = self.get_final_layer_width()
         height = self.get_final_layer_height()
 
-        # Create a new image with the calculated width and height
-        # to serve as the canvas for the stitched image
+        # Canvas for the stitched image
         stitched_image = Image.new("RGB", (width, height))
 
         # Paste the cropped images onto the stitched image
@@ -186,8 +180,6 @@ class BaseLayer(LayerInterface):
                 )
 
             x = int(self.slide_distance * (t / self.duration))
-            # frame_from_pil = pil_image.crop((x, 0, x + self.output_vid_width, self.get_final_layer_height()))
-            # return np.array(frame_from_pil, dtype=np.uint8)
             return image_clip.get_frame(t)[:, x : x + self.output_vid_width]
 
         return VideoClip(make_frame, duration=self.duration)

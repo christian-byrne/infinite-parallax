@@ -6,7 +6,7 @@ from comfy_api.server import ComfyServer
 from workflow_wrapper.workflow import ComfyAPIWorkflow
 from interfaces.project_interface import ProjectInterface
 from interfaces.logger_interface import LoggerInterface
-from constants import INPAINT_WORKFLOW_PATH
+from constants import INPAINT_WORKFLOW_PATH, FEATHERING_MARGIN
 
 
 class InpaintLooper:
@@ -36,6 +36,17 @@ class InpaintLooper:
             logger,
             os.path.join(project.repo_root, INPAINT_WORKFLOW_PATH),
             "INPAINT-LOOP > WF",
+        )
+        # NOTE: Change if workflow changes or custom nodes are updated
+        self.workflow.update(
+            "ImpactWildcardProcessor",
+            "wildcard_text",
+            project.config_file()["prompt_prepend"],
+        )
+        self.workflow.update(
+            "GrowMaskWithBlur",
+            "expand",
+            int(FEATHERING_MARGIN * 1.25)
         )
 
     def log(self, *args, **kwargs):

@@ -25,19 +25,11 @@ class ParallaxVideo:
         self.logger = logger
         self.caller_prefix = caller_prefix
 
-        inpainter = InpaintLooper(project, logger)
-
-        inpainter.iterative_inpaint(4)
-
-        exit()
-
-
         self.object_layers = self.__create_object_layers()
-
         self.create_original_layer_slices()
 
-        if not self.__user_confirm():
-            return
+        inpainter = InpaintLooper(project, logger)
+        inpainter.iterative_inpaint(int(self.project.config_file()["total_steps"]))
 
         self.log("Creating: Base layers")
         self.base_layers = self.__create_base_layers()
@@ -74,7 +66,7 @@ class ParallaxVideo:
         """
         x = 0
         y = 0
-        # TODO: Full vector range logic
+        # TODO: Port Full vector range logic from preprocessor code or put it in a separate method that both call
         input_image = Image.open(self.project.config_file()["input_image_path"])
         width = input_image.width
 
@@ -183,21 +175,6 @@ class ParallaxVideo:
                 layers.append(object_layer)
 
         return layers
-
-    def __user_confirm(self):
-        prompt = (
-            f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):"
-            + self.logger.get_prompt()
-        )
-        decline_message = colored(
-            "Please do so and then run the script again.\n\n", "red"
-        )
-
-        if input(prompt).lower() != "y":
-            print(decline_message)
-            return False
-
-        return True
 
     def __get_video_size(self):
         input_image = Image.open(self.project.config_file()["input_image_path"])

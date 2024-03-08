@@ -44,10 +44,8 @@ class ParallaxProject(ProjectInterface):
         self.init_project_structure()
 
         if self.NEW_PROJECT:
-            self.update_config("version", self.version)
-            # perhaps it's best to try to re-copy image and re-create original layers everytime
-            # because maybe the user wants to change the input image but keep everything else (config, etc.)
             self.copy_input_image_to_project_dir()
+            self.update_config("version", self.version)
 
         ParallaxVideo(self, self.logger)
 

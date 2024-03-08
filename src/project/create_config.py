@@ -71,7 +71,7 @@ def create_config():
         print_list(
             [
                 "Layers start from the top of the image and go down",
-                "The top layer is Layer 0. The bottom layer is Layer N-1.",
+                "The top layer is Layer 1. The bottom layer is Layer N.",
             ]
         )
         for i in range(num_layers):
@@ -90,7 +90,7 @@ def create_config():
                 print(f"Height of last layer: {height_last_layer}px")
                 layers[i]["height"] = int(height_last_layer)
             else:
-                layers[i]["height"] = int(input(f"Height of Layer {i} (in pixels): "))
+                layers[i]["height"] = int(input(f"(int) Height of Layer {i+1} (in pixels): "))
 
     if not using_depth_maps:
         print_list(
@@ -103,7 +103,7 @@ def create_config():
             ]
         )
         for i in range(num_layers):
-            layers[i]["distance"] = input(f"Distance of Layer {i} from the camera: ")
+            layers[i]["distance"] = input(f"(float) Distance of Layer {i+1} from the camera: ")
             # Clean any units or non-numeric characters and convert to float
             layers[i]["distance"] = re.sub("[^0-9]", "", layers[i]["distance"])
             layers[i]["distance"] = float(layers[i]["distance"])
@@ -118,21 +118,21 @@ def create_config():
             "Smoothness",
             "More smoothness means more intermediate frames, and a smoother transition",
             "at the cost of more time and memory",
-            "\nRecommended: 15-20",
+            "\nRecommended: 80",
         ]
     )
 
-    config["smoothness"] = int(1000 / int(input("(int) Smoothness (0-100): ")))
+    config["smoothness"] = int(1000 / int(input("(int) Smoothness (0-100):\n> ")))
 
     print_list(
         [
             "Seconds Per Step",
             "The base speed of the final video",
             "The more seconds per step, the slower the parallax motion, which usually creates better looking results but the motion may become unnoticeable",
-            "\nRecommended: 8-20, assuming a smoothness of 16",
+            "\nRecommended: 6-20, assuming a smoothness of ~80",
         ]
     )
-    config["seconds_per_step"] = int(input("(int) Seconds Per Step: "))
+    config["seconds_per_step"] = int(input("(int) Seconds Per Step:\n> "))
 
     print_list(
         [
@@ -145,7 +145,7 @@ def create_config():
             "Recommended: 30",
         ]
     )
-    config["fps"] = int(input("(int) FPS of the Output Video: "))
+    config["fps"] = int(input("(int) FPS of the Output Video:\n> "))
     
     print_list(
         [
@@ -159,7 +159,7 @@ def create_config():
             " and will have their own motion according to the lowest layer they are in",
         ]
     )
-    num_salient_objects = int(input("Enter the number of salient objects in your input image:\n> "))
+    num_salient_objects = int(input("(int) Enter the number of salient objects in your input image:\n> "))
 
     print_list(
         [
@@ -175,7 +175,7 @@ def create_config():
     )
     config["salient_objects"] = []
     for i in range(num_salient_objects):
-        salient_object_tags = input(f"Salient Object Tags for Object {i+1}: ").split(",")
+        salient_object_tags = input(f"Salient Object Tags for Object {i+1}:\n> ").split(",")
         salient_object_tags = [
             tag.strip("\n").strip("'").strip('"').strip()
             for tag in salient_object_tags
@@ -214,6 +214,20 @@ def create_config():
             )
 
     config["max_steps"] = abs(max([layers[i]["steps_x"] for i in range(num_layers)]))
+
+    if input(f"\nRecommended steps/iterations: {config['max_steps']}. Use? (y/n): ") == "n":
+        config["total_steps"] = int(input("(int) Enter the number of steps/iterations:\n> "))
+    else:
+        config["total_steps"] = config["max_steps"]
+
+    print_list([
+        "A prompt/description will be auto-generated for each step",
+        "An aditional prompt/description can enhance results",
+        "Any description you give will be prepended to the auto-generated prompt at each step",
+        "Describe the art style, medium, related artist, lighting, subject, etc.",
+        "This is optional, press ENTER to skip"
+    ])
+    config["prompt_prepend"] = input("(str) Enter a prompt/description to prepend to each step (optional):\n> ")
 
     config["layers"] = layers
     return config

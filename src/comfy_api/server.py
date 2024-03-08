@@ -113,9 +113,6 @@ class ComfyServer:
         self.log(f"Using python path: {self.python_path}")
 
     def __launch_process(self):
-        # TODO: not sure if changing directories and then switching back is necessary
-        original_dir = os.getcwd()
-
         # Check if server already running
         try:
             with request.urlopen(self.server_url) as f:
@@ -127,7 +124,10 @@ class ComfyServer:
                 "Comfy server status: Not running. Starting new server in detached process"
             )
 
+        # NOTE: Changing dirs necessary if using pyenv aliases per location, i think (not sure)
+        original_dir = os.getcwd()
         os.chdir(COMFY_PATH)
+
         # Launch the server subprocess, don't wait for it to finish, and redirect its output to server log file
         server_logfile = open(self.detatched_logfile, "w")
         self.server_process = subprocess.Popen(

@@ -128,25 +128,15 @@ class SalientObjectLayer(LayerInterface):
         self.__add_self_to_config()
 
     def create_cropped_steps(self) -> None:
-        sample_layer_dir = os.listdir(self.project.cropped_steps_dir())[0]
-        # TODO: determine num_steps at a more global scope in a non error-prone way
-        self.total_steps = (
-            len(
-                os.listdir(
-                    os.path.join(self.project.cropped_steps_dir(), sample_layer_dir)
-                )
-            )
-            - 1  # NOTE: -1 because the first image is skipped for now
-        )
-        self.slide_distance = abs(self.get_x_velocity() * self.total_steps)
+        self.slide_distance = abs(self.get_x_velocity() * self.project.config_file()["total_steps"])
         self.duration = int(
-            self.total_steps * self.project.config_file()["seconds_per_step"]
+            self.project.config_file()["total_steps"] * self.project.config_file()["seconds_per_step"]
         )
         self.output_vid_width = self.original_layer["image"].width
 
         # Create an empty alpha image with height the same as the base image and width = original + slide distance
-        width = (self.total_steps * abs(self.get_x_velocity())) - (
-            (self.total_steps + 1) * FEATHERING_MARGIN
+        width = (self.project.config_file()["total_steps"] * abs(self.get_x_velocity())) - (
+            (self.project.config_file()["total_steps"] + 1) * FEATHERING_MARGIN
         )
         alpha_image = Image.new(
             "RGBA",
@@ -201,7 +191,7 @@ class SalientObjectLayer(LayerInterface):
 
         def make_mask_frame(t):
             # Calculate the position based on time
-            x = int(self.slide_distance * (t / self.duration))
+            x = round(self.slide_distance * (t / self.duration))
             # Take a cropping of the mask from x to x + self.output_vid_width
             return mask[:, x : x + self.output_vid_width]
 
@@ -220,7 +210,7 @@ class SalientObjectLayer(LayerInterface):
                     f"{int(self.slide_distance * (t / self.duration))}",
                 )
 
-            x = int(self.slide_distance * (t / self.duration))
+            x = round(self.slide_distance * (t / self.duration))
             return image_clip.get_frame(t)[:, x : x + self.output_vid_width]
 
         mask_video = VideoClip(make_mask_frame, duration=self.duration, ismask=True)
@@ -233,15 +223,15 @@ class SalientObjectLayer(LayerInterface):
         # Add logic to clean, adjust, or change type of velocity
         # NOTE: for now, make velocity of salient objects slightly slower to make them stand out
         # return int(self.layer_config["velocity"][0] * 0.6)
-        return int(self.layer_config["velocity"][0])
+        return round(self.layer_config["velocity"][0])
 
     def get_y_velocity(self):
         # Add logic to clean, adjust, or change type of velocity
-        return int(self.layer_config["velocity"][1])
+        return round(self.layer_config["velocity"][1])
 
     def get_final_layer_height(self):
         # Add cleaning, adjusting, or type changing logic
-        return int(self.original_layer["image"].height)
+        return round(self.original_layer["image"].height)
 
     def get_final_layer_width(self):
         return self.slide_distance + self.original_layer["image"].width
