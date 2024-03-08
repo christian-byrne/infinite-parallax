@@ -19,8 +19,10 @@ GLOABL_LOGS_DIR = "logs" # rel path from repo root
 COMFY_PORT = 8188
 COMFY_API_MAX_CONNECT_ATTEMPTS = 18
 SALIENT_OBJECTS_WORKFLOW_PATH = "workflow-templates/api/salient_object/salient_object-remove_inpaint_extract-v2-API_VERSION.json"
+INPAINT_WORKFLOW_PATH = "workflow-templates/api/inpaint/inpaint_with_lora_stack-API_VERSION.json"
 SALIENT_OBJECT_ALPHA_LAYER_PREFIX = "salient_object_alpha_layer"
 BASE_LAYER_WITHOUT_OBJECTS_PREFIX = "base_layer-salient_object_removed"
+START_STEP_PREFIX = "start_step"
 STITCHED_OBJECTS_DIR = "stitches/stitched_object_alphas"
 DEFAULT_DISTANCES = {
     "cloud_layer": {

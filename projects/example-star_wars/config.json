@@ -19,7 +19,7 @@
             "distance": 50.0,
             "distance_ratio": 0.5681818181818182,
             "velocity": [
-                -15,
+                -80,
                 0.0
             ],
             "steps_x": 7,
@@ -30,7 +30,7 @@
             "distance": 38.0,
             "distance_ratio": 0.4318181818181818,
             "velocity": [
-                -40,
+                -55,
                 0.0
             ],
             "steps_x": 5,
@@ -52,11 +52,36 @@
             "neon sign"
         ]
     ],
-    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00010_.png",
-    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed_00010_.png",
     "version": [
         0,
         1,
-        33
+        77
+    ],
+    "input_image_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed-1_00001_.png",
+    "input_image_original_path": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/star_wars-medium.jpg",
+    "salient_object_layers": [
+        {
+            "index": 0,
+            "name_prefix": "salient_object_1",
+            "prompt_tags": "man . person . silhouette . human . 1boy . 2boys . lightsaber . neon sign",
+            "parent_layer_index": 1,
+            "alpha_layer_fullpath": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/objects/alpha_layers/salient_objects/salient_object_alpha_layer-1.png",
+            "base_layer_fullpath": "/home/c_byrne/projects/infinite-parallax/projects/example-star_wars/base_layer-salient_object_removed-1_00001_.png",
+            "layer_height_breakpoints": [
+                0,
+                400
+            ],
+            "layer_config": {
+                "height": 137,
+                "distance": 38.0,
+                "distance_ratio": 0.4318181818181818,
+                "velocity": [
+                    -40,
+                    0.0
+                ],
+                "steps_x": 5,
+                "steps_y": 0
+            }
+        }
     ]
 }

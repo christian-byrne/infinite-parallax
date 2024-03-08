@@ -56,7 +56,7 @@
     },
     "8": {
         "inputs": {
-            "image": "base_layer-salient_object_removed_00010_.png",
+            "image": "base_layer-salient_object_removed-1_00001_.png",
             "upload": "image"
         },
         "class_type": "LoadImage",
@@ -239,7 +239,7 @@
     },
     "22": {
         "inputs": {
-            "filename_prefix": "base_layer-salient_object_removed",
+            "filename_prefix": "base_layer-salient_object_removed-1",
             "images": [
                 "17",
                 5
@@ -280,7 +280,7 @@
     },
     "28": {
         "inputs": {
-            "filename_prefix": "salient_object_alpha_layer",
+            "filename_prefix": "salient_object_alpha_layer-1",
             "images": [
                 "25",
                 0

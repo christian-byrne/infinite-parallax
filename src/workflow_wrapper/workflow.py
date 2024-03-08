@@ -10,12 +10,12 @@ class ComfyAPIWorkflow:
         project: ProjectInterface,
         logger: LoggerInterface,
         workflow_template_path: str,
-        caller_preifx: str = "WORKFLOW MANAGER",
+        caller_prefix: str = "WORKFLOW MANAGER",
     ):
         self.project = project
         self.logger = logger
         self.workflow_template_path = workflow_template_path
-        self.caller_prefix = caller_preifx
+        self.caller_prefix = caller_prefix
 
         self.filename = (
             os.path.basename(self.workflow_template_path).replace(".json", "")

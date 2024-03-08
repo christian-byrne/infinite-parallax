@@ -59,13 +59,9 @@ class ComfyClient:
         for attempt in range(COMFY_API_MAX_CONNECT_ATTEMPTS):
             try:
                 self.__websocket.connect(
-                    f"ws://localhost:{COMFY_PORT}/ws?clientId={self.client_id}"
+                    f"ws://localhost:{COMFY_PORT}/ws?clientId={self.client_id}",
                 )
             except ConnectionRefusedError:
-                # self.log(
-                #     f"Comfy server connection attempt {attempt + 1}/{COMFY_API_MAX_CONNECT_ATTEMPTS}: failed",
-                #     pad_with_rules=False,
-                # )
                 self.logger.progress_bar(
                     attempt + 1,
                     COMFY_API_MAX_CONNECT_ATTEMPTS,

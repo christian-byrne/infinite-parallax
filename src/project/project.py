@@ -48,8 +48,7 @@ class ParallaxProject(ProjectInterface):
             # perhaps it's best to try to re-copy image and re-create original layers everytime
             # because maybe the user wants to change the input image but keep everything else (config, etc.)
             self.copy_input_image_to_project_dir()
-            self.input_image = Image.open(self.config_file()["input_image_path"])
-    
+
         ParallaxVideo(self, self.logger)
 
     def log(self, *args, **kwargs):
@@ -59,7 +58,7 @@ class ParallaxProject(ProjectInterface):
         self.log(
             "Loading/Creating project: ",
             f"{self.name} by {self.author}",
-            pad_with_rules=True
+            pad_with_rules=True,
         )
         self.log("Repo root: ", f"{self.repo_root}")
         self.project_dir_path = os.path.join(

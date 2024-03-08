@@ -1,12 +1,13 @@
-from termcolor import colored
-from moviepy.editor import CompositeVideoClip, VideoClip
+import os
 from PIL import Image
+from moviepy.editor import CompositeVideoClip, VideoClip
 from layers.base import BaseLayer
 from layers.salient_object import SalientObjectLayer
-import os
+from inpaint.inpaint_loop import InpaintLooper
 from interfaces.project_interface import ProjectInterface
 from interfaces.layer_interface import LayerInterface
 from interfaces.logger_interface import LoggerInterface
+from termcolor import colored
 from constants import (
     VIDEO_CODEC,
     DEV,
@@ -14,65 +15,51 @@ from constants import (
 
 
 class ParallaxVideo:
-    def __init__(self, project: ProjectInterface, logger: LoggerInterface, caller_prefix="VIDEO EDITOR"):
+    def __init__(
+        self,
+        project: ProjectInterface,
+        logger: LoggerInterface,
+        caller_prefix="VIDEO EDITOR",
+    ):
         self.project = project
         self.logger = logger
         self.caller_prefix = caller_prefix
 
-        self.object_layers = self.create_salient_object_layer()
+        inpainter = InpaintLooper(project, logger)
+
+        inpainter.iterative_inpaint(4)
+
+        exit()
+
+
+        self.object_layers = self.__create_object_layers()
 
         self.create_original_layer_slices()
 
-        if not self.user_confirm():
+        if not self.__user_confirm():
             return
 
-        self.base_layers = self.create_base_layers()
+        self.log("Creating: Base layers")
+        self.base_layers = self.__create_base_layers()
         for layer in self.base_layers:
+            self.log(f"Stitching: Layer {layer.index}")
             layer.create_cropped_steps()
             layer.stitch_cropped_steps()
         for obj_layer in self.object_layers:
+            self.log(f"Extending: Oject layer {obj_layer.index+1}")
             obj_layer.create_cropped_steps()
             obj_layer.stitch_cropped_steps()
 
+        self.log("Generating videoclips", pad_with_rules=True)
+        self.log("Generating videoclips for each base layer")
         self.layer_videoclips = self.create_layer_videoclips()
+        self.log("Generating videoclips and mask videoclips for each object layer")
         self.object_layer_videoclips = self.create_object_layer_videoclips()
+        self.log("Compositing layer videoclips\n")
         self.composite_layer_videoclips()
-    
+
     def log(self, *args, **kwargs):
         self.logger.log(caller_prefix=self.caller_prefix, *args, **kwargs)
-
-    def user_confirm(self):
-        prompt = (
-            f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):" + self.logger.get_prompt()
-        )
-        decline_message = colored(
-            "Please do so and then run the script again.\n\n", "red"
-        )
-
-        if input(prompt).lower() != "y":
-            print(decline_message)
-            return False
-
-        return True
-
-    def get_video_size(self):
-        input_image = Image.open(self.project.config_file()["input_image_path"])
-        return input_image.size
-
-    def create_base_layers(self) -> list[LayerInterface]:
-        layers = []
-        for index, layer_config in enumerate(self.project.config_file()["layers"]):
-            name_prefix = f"layer_{index+1}"
-            layers.append(BaseLayer(self.project, self.logger, layer_config, name_prefix, index + 1))
-
-        return layers
-
-    def create_salient_object_layer(self) -> list[LayerInterface]:
-        layers = []
-        for index, tags in enumerate(self.project.config_file()["salient_objects"]):
-            layers.append(SalientObjectLayer(self.project, self.logger, tags, index))
-
-        return layers
 
     def create_original_layer_slices(self):
         """
@@ -141,7 +128,7 @@ class ParallaxVideo:
 
         video_composite = CompositeVideoClip(
             self.layer_videoclips + self.object_layer_videoclips,
-            size=self.get_video_size(),
+            size=self.__get_video_size(),
         )
 
         output_path = os.path.join(
@@ -173,4 +160,45 @@ class ParallaxVideo:
             threads=12 if DEV else 4,
         )
 
-        self.logger.log(f"Final video saved to {output_path}")
+        self.log(f"Final video saved to: {output_path}", pad_with_rules=True)
+
+    def __create_base_layers(self) -> list[LayerInterface]:
+        layers = []
+        for index, layer_config in enumerate(self.project.config_file()["layers"]):
+            name_prefix = f"layer_{index+1}"
+            layers.append(
+                BaseLayer(
+                    self.project, self.logger, layer_config, name_prefix, index + 1
+                )
+            )
+
+        return layers
+
+    def __create_object_layers(self) -> list[LayerInterface]:
+        layers = []
+        for index, tags in enumerate(self.project.config_file()["salient_objects"]):
+            # Sometimes layers will return False (because nothing was segmented/extracted)
+            object_layer = SalientObjectLayer(self.project, self.logger, tags, index)
+            if object_layer:
+                layers.append(object_layer)
+
+        return layers
+
+    def __user_confirm(self):
+        prompt = (
+            f"\nHave you finished inpainting the layers and putting the outputs in {self.project.layer_outputs_dir()}? (y/n):"
+            + self.logger.get_prompt()
+        )
+        decline_message = colored(
+            "Please do so and then run the script again.\n\n", "red"
+        )
+
+        if input(prompt).lower() != "y":
+            print(decline_message)
+            return False
+
+        return True
+
+    def __get_video_size(self):
+        input_image = Image.open(self.project.config_file()["input_image_path"])
+        return input_image.size

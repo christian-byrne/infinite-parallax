@@ -1,0 +1,249 @@
+{
+    "4": {
+        "inputs": {
+            "ckpt_name": "Stable-diffusion/inpainting/wondermix_V2-inpainting.safetensors"
+        },
+        "class_type": "CheckpointLoaderSimple",
+        "_meta": {
+            "title": "Load Checkpoint"
+        }
+    },
+    "6": {
+        "inputs": {
+            "text": [
+                "291",
+                0
+            ],
+            "clip": [
+                "58",
+                1
+            ]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Prompt)"
+        }
+    },
+    "7": {
+        "inputs": {
+            "text": "embedding:embeddings/FastNegativeV2, embedding:embeddings/bad-picture-chill-75v, embedding:embeddings/NegativeDynamics-neg",
+            "clip": [
+                "58",
+                1
+            ]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Negative Prompt)"
+        }
+    },
+    "8": {
+        "inputs": {
+            "samples": [
+                "118",
+                0
+            ],
+            "vae": [
+                "4",
+                2
+            ]
+        },
+        "class_type": "VAEDecode",
+        "_meta": {
+            "title": "VAE Decode"
+        }
+    },
+    "11": {
+        "inputs": {
+            "image": "start-step_00001_ (9).png",
+            "upload": "image"
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Load Image"
+        }
+    },
+    "54": {
+        "inputs": {
+            "positive": [
+                "6",
+                0
+            ],
+            "negative": [
+                "7",
+                0
+            ],
+            "vae": [
+                "4",
+                2
+            ],
+            "pixels": [
+                "11",
+                0
+            ],
+            "mask": [
+                "293",
+                0
+            ]
+        },
+        "class_type": "InpaintModelConditioning",
+        "_meta": {
+            "title": "InpaintModelConditioning"
+        }
+    },
+    "57": {
+        "inputs": {
+            "switch_1": "Off",
+            "lora_name_1": "Lora/art_styles-misc/CineStyle5.safetensors",
+            "model_weight_1": 0.9,
+            "clip_weight_1": 0.9,
+            "switch_2": "Off",
+            "lora_name_2": "None",
+            "model_weight_2": 0.89,
+            "clip_weight_2": 0.91,
+            "switch_3": "Off",
+            "lora_name_3": "None",
+            "model_weight_3": 0.7000000000000001,
+            "clip_weight_3": 1
+        },
+        "class_type": "CR LoRA Stack",
+        "_meta": {
+            "title": "\ud83d\udc8a CR LoRA Stack"
+        }
+    },
+    "58": {
+        "inputs": {
+            "model": [
+                "4",
+                0
+            ],
+            "clip": [
+                "4",
+                1
+            ],
+            "lora_stack": [
+                "57",
+                0
+            ]
+        },
+        "class_type": "CR Apply LoRA Stack",
+        "_meta": {
+            "title": "\ud83d\udc8a CR Apply LoRA Stack"
+        }
+    },
+    "118": {
+        "inputs": {
+            "add_noise": "enable",
+            "noise_seed": 527067885742927,
+            "steps": 30,
+            "cfg": 4,
+            "sampler_name": "dpmpp_2m_sde_gpu",
+            "scheduler": "karras",
+            "start_at_step": 0,
+            "end_at_step": 10000,
+            "return_with_leftover_noise": "disable",
+            "model": [
+                "58",
+                0
+            ],
+            "positive": [
+                "54",
+                0
+            ],
+            "negative": [
+                "54",
+                1
+            ],
+            "latent_image": [
+                "54",
+                2
+            ]
+        },
+        "class_type": "KSamplerAdvanced",
+        "_meta": {
+            "title": "KSampler (Advanced)"
+        }
+    },
+    "134": {
+        "inputs": {
+            "wildcard_text": "blue light, fog, lightsaber battle, neon blue lights, dark, steam, movie scene, star wars, ultra detailed",
+            "populated_text": "blue light, fog, lightsaber battle, neon blue lights, dark, steam, movie scene, star wars, ultra detailed",
+            "mode": true,
+            "seed": 700596057288320,
+            "Select to add Wildcard": "Select the Wildcard to add to the text"
+        },
+        "class_type": "ImpactWildcardProcessor",
+        "_meta": {
+            "title": "ImpactWildcardProcessor"
+        }
+    },
+    "289": {
+        "inputs": {
+            "filename_prefix": "end_step",
+            "images": [
+                "8",
+                0
+            ]
+        },
+        "class_type": "SaveImage",
+        "_meta": {
+            "title": "Save Image"
+        }
+    },
+    "290": {
+        "inputs": {
+            "model": "wd-v1-4-moat-tagger-v2",
+            "threshold": 0.35,
+            "character_threshold": 0.85,
+            "replace_underscore": false,
+            "trailing_comma": false,
+            "exclude_tags": "",
+            "tags": "outdoors, sky, no_humans, night, building, night_sky, scenery, light, lamppost, lights",
+            "image": [
+                "11",
+                0
+            ]
+        },
+        "class_type": "WD14Tagger|pysssss",
+        "_meta": {
+            "title": "WD14 Tagger \ud83d\udc0d"
+        }
+    },
+    "291": {
+        "inputs": {
+            "delimiter": ", ",
+            "clean_whitespace": "true",
+            "text_a": [
+                "134",
+                0
+            ],
+            "text_b": [
+                "290",
+                0
+            ]
+        },
+        "class_type": "Text Concatenate",
+        "_meta": {
+            "title": "Text Concatenate"
+        }
+    },
+    "293": {
+        "inputs": {
+            "expand": 8,
+            "incremental_expandrate": 0,
+            "tapered_corners": true,
+            "flip_input": false,
+            "blur_radius": 1,
+            "lerp_alpha": 1,
+            "decay_factor": 1,
+            "mask": [
+                "11",
+                1
+            ]
+        },
+        "class_type": "GrowMaskWithBlur",
+        "_meta": {
+            "title": "GrowMaskWithBlur"
+        }
+    }
+}
