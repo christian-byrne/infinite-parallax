@@ -1,4 +1,6 @@
 
+**UPDATE**: *This project was finished and turned into a set of custom ComfyUI nodes for easy use* — [found here](https://github.com/christian-byrne/elimination-nodes?tab=readme-ov-file#infinite-parallax-nodes)
+
 # Infinite Parallax
 
 In Unity, *infinite parallax* ([see example](https://www.youtube.com/watch?v=MEy-kIGE-lI)) is a technique used to create the illusion of depth in 2D games. This is done by moving the background layers at different speeds which vary inversely with distance-from-viewer, creating a [parallax](https://en.wikipedia.org/wiki/Parallax) effect.
@@ -33,8 +35,7 @@ Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, midground, foreground), 
 - [x] Large number of objects testing
 - [x] Update current input-image between object extraction steps in order to iteratively remove objects and inpaint negative space
 - [x] Expand mask with feathering and blur before extracting alpha layer
-- [ ] venv consolidate with all necessary versions of python
-- [ ] Salient objects
+- [x] Salient objects
   - [x] Segmentation prompt tags use correct separator/format
   - [x] Multiple iterations of salient object removal
   - [x] Get salient object tags/prompts in config creation
@@ -45,41 +46,34 @@ Angle of Motion 180°, Layers: 5 (clouds, sky, horizon, midground, foreground), 
   - [x] Calculate motion vectors for each object alpha layer
     - [x] Determine object velocity from config (default: objects move according to their base layer, option: objects are static or barely move so as to highlight them)
   - [x] Overlay alpha layers onto final video
-  - [ ] Documentation - add the overlay process to the video composite process explanation
 - [x] Segmentation for initial layers
   - [x] Edit methods to handle non-rectangular layers (CompositeVideoClip)
   - [x] Documentation
-- [ ] Depth Maps 
-  - [ ] Add autogeneration and condition hook to inpainting workflow
-  - [ ] Documentation
-- [ ] ControlNet edge softening
-  - [ ] Documentation
+- [x] Depth Maps (edit: part of workflow now) 
+- [x] ControlNet edge softening (edit: part of workflow now)
 - [x] Use project-specific I/O directories
   - [x] As args when starting detached comfy process/server
   - [x] Use filename prefix constants for faster selection of output when server terminates
 - [x] Feathering layers on axis perpindicular of motion (e.g. if motion is horizontal, feathering is vertical). Somehow determine how to expand-feather at some poitn in the process before given to `CompositeVideoClip`
 - [ ] Full Vector testing
-  - [ ] Negative and positive velocity testing
+  - [x] Negative and positive velocity testing
 - [x] Inpainting prompts (negative and positive) from config
   - [x] For salient object removal
   - [x] For layer shifts
 - [x] Delete first image from each layer sequence or don't save in first place
-- [ ] Auomate video post-processing
-  - [ ] Add sound from library
-  - [ ] Color correction
-- [ ] Sizing standardization solution from tensorflow to PIL
-  - [ ] Crop `ERROR_MARGIN` pixels from top of first layer and bottom of last layer 
-- [ ] Auto create reversed version and ping-ponged version after export
-- [ ] Finalize
+- [x] Auomate video post-processing
+  - [x] Add sound from library
+  - [x] Color correction
+- [x] Auto create reversed version and ping-ponged version after export
+- [x] Finalize
   - [x] Create simple example project
-  - [ ] Update README
-  - [ ] Turn into ComfyUI node
-  - [ ] Web view
+  - [x] Update README
+  - [x] Turn into ComfyUI node
 
 ## Reminders
 
 - A new comfy instance is not started if already running, but the running instance may have been started by user and therefore have different i/o directory args
 - Use the non-API workflows for editing manually otherwise you have to re-set the node titles each time
 - LoadImage nodes use relative paths from `--input-directory`
-- Smoothness a function of perceivability of pixel distance
+- Smoothness is a function of perceivability of pixel distance
 
