@@ -1,5 +1,5 @@
 
-***UPDATE!***: *This project was finished and turned into a [set of custom ComfyUI nodes]((https://github.com/christian-byrne/elimination-nodes?tab=readme-ov-file#infinite-parallax-nodes)). You can create your own parallax videos using those nodes in the ComfyUI interface*
+***UPDATE!***: *This project was finished and turned into a [set of custom ComfyUI nodes](https://github.com/christian-byrne/elimination-nodes?tab=readme-ov-file#infinite-parallax-nodes) found here. You can create your own parallax videos using those nodes in the ComfyUI interface*
 
 &nbsp;
 
